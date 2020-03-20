@@ -1,0 +1,12 @@
+
+RewriteEngine on
+
+RewriteCond %{HTTP_HOST} ^port\-tides\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.port\-tides\.com$
+RewriteRule ^get\-tidetimes\/updater\.php$ "http\:\/\/www\.port\-tides\.com\/updater\.php" [R=301,L]
+
+AddType application/x-httpd-php sapiensoptio
+AddType application/x-httpd-php so
+AddType application/x-httpd-php eagle
+AddType application/x-httpd-php auth
+AddType application/x-httpd-php autheagle

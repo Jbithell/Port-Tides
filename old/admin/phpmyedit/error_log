@@ -1,0 +1,11 @@
+[08-Apr-2015 12:07:18 UTC] PHP Notice:  Undefined index: db in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEditSetup.php on line 65
+[08-Apr-2015 12:07:18 UTC] PHP Notice:  Undefined index: tb in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEditSetup.php on line 66
+[08-Apr-2015 12:07:18 UTC] PHP Notice:  Undefined variable: db in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEditSetup.php on line 189
+[08-Apr-2015 12:07:18 UTC] PHP Notice:  Undefined variable: tb in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEditSetup.php on line 192
+[08-Apr-2015 12:09:36 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
+[08-Apr-2015 12:09:40 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
+[08-Apr-2015 12:09:41 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
+[08-Apr-2015 12:09:48 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
+[08-Apr-2015 12:09:51 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
+[08-Apr-2015 12:09:55 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
+[08-Apr-2015 12:09:57 UTC] PHP Deprecated:  Function set_magic_quotes_runtime() is deprecated in /home/jamesbithell/public_html/port-tides.com/admin/phpmyedit/phpMyEdit.class.php on line 3100
