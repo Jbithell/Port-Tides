@@ -3,6 +3,7 @@
   "appName": "porthmadog-tides-times",
   "bundledWebRuntime": false,
   "npmClient": "npm",
+  "windowsAndroidStudioPath": "C:\\Users\\James\\AppData\\Local\\JetBrains\\Toolbox\\apps\\AndroidStudio\\ch-0\\193.6514223\\bin\\studio64.exe",
   "webDir": "build",
   "cordova": {}
 }
