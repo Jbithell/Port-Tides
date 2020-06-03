@@ -1,5 +1,6 @@
 import { IonItemDivider, IonItemGroup, IonLabel, IonList, IonListHeader, IonAlert, AlertButton } from '@ionic/react';
 import React, { useState, useCallback } from 'react';
+import moment from 'moment';
 import { Schedule, Tide } from '../models/Schedule';
 import SessionListItem from './SessionListItem';
 import { connect } from '../data/connect';
@@ -54,7 +55,7 @@ const SessionList: React.FC<SessionListProps> = ({ schedule }) => {
           <IonItemGroup key={`group-${index}`}>
             <IonItemDivider sticky>
               <IonLabel>
-                {schedule[index].date}
+                {moment(schedule[index].date).format('dddd Do MMMM YYYY')}
               </IonLabel>
             </IonItemDivider>
             {schedule[index].groups.map((session: Tide, sessionIndex: number) => (

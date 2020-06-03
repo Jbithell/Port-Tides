@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { IonItemSliding, IonItem, IonLabel, IonNote } from '@ionic/react';
 import { Tide } from '../models/Schedule';
+import moment from 'moment';
 
 interface SessionListItemProps {
   session: Tide;
@@ -17,7 +18,7 @@ const SessionListItem: React.FC<SessionListItemProps> = ({ session }) => {
     <IonItemSliding>
       <IonItem>
         <IonLabel>
-          <h3>{session.time}</h3>
+          <h3>{moment('01 January 1970 ' + session.time).format('h:mma')}</h3>
         </IonLabel>
         <IonNote slot="end" color="primary">{session.height}m</IonNote>
       </IonItem>
