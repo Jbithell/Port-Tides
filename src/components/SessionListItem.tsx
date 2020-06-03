@@ -19,7 +19,7 @@ const SessionListItem: React.FC<SessionListItemProps> = ({ session }) => {
         <IonLabel>
           <h3>{session.time}</h3>
         </IonLabel>
-        <IonNote slot="end" color="primary">{session.height}</IonNote>
+        <IonNote slot="end" color="primary">{session.height}m</IonNote>
       </IonItem>
     </IonItemSliding>
   );
