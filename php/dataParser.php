@@ -19,7 +19,7 @@ $CONFIG = [
 Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Chart Datum m.mmm],Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Chart Datum m.mmm],Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Chart Datum m.mmm],Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Chart Datum m.mmm]
 
 */
-	
+
 //Begin Program
 date_default_timezone_set('Europe/London');
 $files = glob($CONFIG['folder'] . '/*.{txt}', GLOB_BRACE);
@@ -36,27 +36,27 @@ foreach ($files as $file) {
 		if (count($array) != 20 and count($array) != 17) continue;
 
 		$date = date("d M Y", strtotime($array[4])); //Date for next iteration
-		
-		
-		
+
+
+
 		if (date("I",strtotime($date)) == 1) $daylightAdjust = 3600; //Add an hour for BST
 		else $daylightAdjust = 0;
-		
+
 		//For some reason, known only to the UKHO - some of them do high/low tide in the wrong order....
 		if ($array[10] == "X") $tides[strtotime($date . " " . substr_replace($array[7], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[9];
 		else $tides[strtotime($date . " " . substr_replace($array[10], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[12];
-		
+
 		if (($array[13] != "X" and count($array) == 17) or count($array) == 20) {
 			if ($array[13] != "X") $tides[strtotime($date . " " . substr_replace($array[13], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[15]; //Two tides on that day
 			else $tides[strtotime($date . " " . substr_replace($array[16], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[18]; //Two tides on that day
-		}	
+		}
 	}
 }
 ksort ($tides); //Put the tides in ascending order
 $tidesDays = [];
 foreach ($tides as $time=>$height) {
 	if (!isset($tidesDays[date("d M Y", $time)])) $tidesDays[date("d M Y", $time)] = [];
-	
+
 	$tidesDays[date("d M Y", $time)][] = ["time" => date("H:i:s", $time), "height" => $height];
 }
 //Generate timings in the format that the app likes
@@ -76,7 +76,7 @@ foreach ($tidesMonths as $month=>$data) {
 	//Generate a PDF
 	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("m-Y",strtotime($month))) . '.pdf'];
 	$pdf['url'] = $CONFIG["pathToPdfs"] . $pdf['filename'];
-	
+
 	$output = '<center><div style="margin-top: 8px; margin-bottom: 2px; margin-left: 5px; margin-right: 5px;">
 				<style>
 					h1 {
@@ -180,7 +180,7 @@ foreach ($tidesMonths as $month=>$data) {
 $output = [
 	"schedule" => $tidesApp,
 	"tides" => [
-		"rawAdjusted" => $tides, 
+		"rawAdjusted" => $tides,
 		"daysAdjusted" => $tidesDays,
 		"monthsAdjusted" => $tidesMonths
 	],
