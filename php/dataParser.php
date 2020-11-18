@@ -74,7 +74,7 @@ foreach ($tidesDays as $time=>$day) {
 $pdfs = [];
 foreach ($tidesMonths as $month=>$data) {
 	//Generate a PDF
-	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("m-Y",strtotime($month))) . '.pdf'];
+	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("m-Y",strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("m-Y",strtotime($month))) . '.html'];
 	$pdf['url'] = $CONFIG["pathToPdfs"] . $pdf['filename'];
 
 	$output = '<center><div style="margin-top: 8px; margin-bottom: 2px; margin-left: 5px; margin-right: 5px;">
@@ -159,6 +159,7 @@ foreach ($tidesMonths as $month=>$data) {
 					$output .= '<td style="border: 1px solid black; text-align:center">' . date_sunset (strtotime($dayDate), SUNFUNCS_RET_STRING,52.92,-4.13,ini_get("date.sunrise_zenith"),date("I",strtotime($dayDate))) . '</td></tr>';
 				}
 	$output .= '</table>';
+	$footer = '<span style="font-weight: bold;">Copyright Information:</span> All Tidal Data is &copy;Crown Copyright. Reproduced by permission of the Controller of Her Majesty\'s Stationery Office and the UK Hydrographic Office (www.ukho.gov.uk). No tidal data may be reproduced without the expressed permission of the ukho licencing department.<br/><span style="font-weight: bold;">Disclaimer:</span> Tidal Predictions are provided for use by all water users though the providers of this table can not be held accountable for the accuracy of this data or any accidents that result from the use of this data. <span style="font-weight: bold;">Time Zone Information: </span>All Tidal Predictions above are displayed in GMT/BST<br/><div align="right" style="font-style: italic;">Table provided by port-tides.com</div>';
 	$mpdf=new \Mpdf\Mpdf(['format' => 'A4',
 		'margin_left' => 10,
 		'margin_right' => 10,
@@ -167,12 +168,13 @@ foreach ($tidesMonths as $month=>$data) {
 		'margin_header' => 0,
 		'margin_footer' => 9
 	]);
-	$mpdf->SetHTMLFooter('<span style="font-weight: bold;">Copyright Information:</span> All Tidal Data is &copy;Crown Copyright. Reproduced by permission of the Controller of Her Majesty\'s Stationery Office and the UK Hydrographic Office (www.ukho.gov.uk). No tidal data may be reproduced without the expressed permission of the ukho licencing department.<br/><span style="font-weight: bold;">Disclaimer:</span> Tidal Predictions are provided for use by all water users though the providers of this table can not be held accountable for the accuracy of this data or any accidents that result from the use of this data. <span style="font-weight: bold;">Time Zone Information: </span>All Tidal Predictions above are displayed in GMT/BST<br/><div align="right" style="font-style: italic;">Table provided by port-tides.com</div>');
+	$mpdf->SetHTMLFooter($footer);
 	$mpdf->SetTitle('Porthmadog Tide Times | ' .  date("F",strtotime($month)) . '/' .date("Y",strtotime($month)));
 	$mpdf->SetAuthor ('port-tides.com');
 	$mpdf->SetProtection(array('print'), '');
 	$mpdf->WriteHTML($output);
 	$mpdf->Output('pdf/' . $pdf['filename'],'F');
+	file_put_contents('pdf/' . $pdf['htmlfilename'],($output.$footer));
 	$pdfs[] = $pdf;
 }
 
