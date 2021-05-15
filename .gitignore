@@ -82,6 +82,7 @@ yarn-error.log*
 
 .stencil/
 
+.vscode/
 
 .idea/
 
@@ -90,3 +91,4 @@ php/vendor/
 php/pdf/*.pdf
 php/pdf/*.html
 php/tides.json
+
