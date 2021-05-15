@@ -1,13 +1,14 @@
 import * as React from "react";
+import Header from "../components/Header.js";
 
 const IndexPage = () => {
   return (
-    <main>
-      <title>Port Tides Homepage</title>
+    <>
+      <Header lang="cy" />
       <h1>
-        Welcome
+      Croeso
       </h1>
-    </main>
+    </>
   );
 };
 

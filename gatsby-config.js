@@ -22,5 +22,14 @@ module.exports = {
       },
       __key: "images",
     },
+    {
+      resolve: "gatsby-plugin-i18n",
+      options: {
+        langKeyDefault: "en", //cy or cy-GB
+        langKeyForNull: "en",
+        prefixDefault: false,
+        useLangKeyLayout: false,
+      },
+    },
   ],
 };
