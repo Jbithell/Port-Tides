@@ -6,7 +6,7 @@ const Header = (props) => {
   return (
     <>
       <HtmlHead lang={props.lang} />
-      <LanguageSelector location={location} lang={props.lang} />
+      <LanguageSelector location={typeof window !== "undefined" ? location : false} lang={props.lang} />
     </>
   );
 };
