@@ -2,7 +2,7 @@ import * as React from "react";
 
 // markup
 const NotFoundPage = () => {
-  const lang = location.pathname.includes("/cy") ? "cy" : "en";
+  const lang = (typeof window !== "undefined" && location.pathname.includes("/cy") ? "cy" : "en");
   return (
     <main>
       <title>Not found</title>
