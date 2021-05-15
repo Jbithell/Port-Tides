@@ -1,7 +1,0 @@
-{
-  "name": "port-tides-app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react"
-}
