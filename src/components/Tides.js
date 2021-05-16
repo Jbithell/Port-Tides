@@ -6,6 +6,7 @@ import TidalData from "../../data/tides.json";
 const Tides = (props) => {
   const [tides, setTides] = useState([]);
   useEffect(() => {
+    setTides([]);
     const today = new Date();
     today.setHours(0,0,0,0);
     const nextYear = new Date(today);
