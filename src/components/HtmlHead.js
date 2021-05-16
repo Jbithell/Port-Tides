@@ -19,7 +19,6 @@ const HtmlHead = (props) => {
   );
 };
 
-
 HtmlHead.propTypes  = {
   title: PropTypes.string,
   image: PropTypes.bool,

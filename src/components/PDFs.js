@@ -20,13 +20,12 @@ const PDFs = (props) => {
     });
   }, []);
 
-
+  //{props.lang == "en" ? "Tides":"Welsh Tides"}
   return (
     <>
-      {props.lang == "en" ? "Tides":"Welsh Tides"}
-      {files.map((element,index) => (
-        <a href={"static/" + element.filename} key={index}>{element.name}</a>
-      ))} 
+      <div className="flex gap-4 px-4 py-10 flex-wrap">
+        {files.map((element,index) => (<div className="bg-white shadow-lg rounded-3xl p-5 sm:p-7" key={index}><a href={"static/" + element.filename}>{element.name}</a></div>))}
+      </div>
     </>
   );
 };

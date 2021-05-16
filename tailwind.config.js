@@ -2,7 +2,11 @@ module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: theme => ({
+        "header-image": "url('../images/porthmadogCob.jpg')"
+      })
+    },
   },
   variants: {
     extend: {},
