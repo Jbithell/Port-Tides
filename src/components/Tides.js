@@ -19,17 +19,19 @@ const Tides = (props) => {
       }
     });
   }, []);
-  //{props.lang == "en" ? "Tides":"Welsh Tides"}
+
+  
   return (
     <>
-      <div className="flex flex-nowrap flew-row overflow-x-auto gap-4 px-4 py-10 ">
+      <p className="text-3xl text-black mx-6 pt-4">{props.lang == "en" ? "High Tides This Week":"Llanw Uchel Yr Wythnos Hon"}</p>
+      <div className="flex flex-nowrap flew-row overflow-x-auto no-scrollbar gap-4 px-4 pb-3 pt-4">
         {tides.map((element,index) => (
-          <div className="bg-white shadow-lg sm:rounded-3xl sm:flex-grow sm:p-5" key={index}>
-            <p>{DateTime.fromSQL(element.date).toLocaleString({ weekday: "long", day: "2-digit", month: "long" })}</p>
-            {element.groups.map((element,index) => (
+          <div className="bg-white min-w-max shadow-lg rounded-3xl sm:flex-grow p-5" key={index}>
+            <p className="text-base">{DateTime.fromSQL(element.date).toLocaleString({ weekday: "long", day: "2-digit", month: "long" })}</p>
+            {element.groups.map(tide => (
               <>
-                <p>{element.time}</p>
-                <p>{element.height}</p>
+                <p className="text-xl font-semibold inline-block">{DateTime.fromSQL(element.date + " " + tide.time).toLocaleString(DateTime.TIME_SIMPLE)}</p>
+                <p className="text-lg font-light inline-block ml-3">{tide.height}m</p><br/>
               </>
             ))}
           </div>

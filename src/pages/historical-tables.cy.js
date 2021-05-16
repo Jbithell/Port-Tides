@@ -1,14 +1,12 @@
 import * as React from "react";
 import Layout from "../components/Layout.js";
-import Tides from "../components/Tides.js";
 import PDFs from "../components/PDFs.js";
-const IndexPage = () => {
+const HistoricalTablesPage = () => {
   return (
     <Layout lang="cy">
-      <Tides lang="cy" />
-      <PDFs lang="cy" historical={false} />
+      <PDFs lang="cy" historical={true} />
     </Layout>
   );
 };
 
-export default IndexPage;
+export default HistoricalTablesPage;
