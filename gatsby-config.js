@@ -36,6 +36,9 @@ module.exports = {
         theme_color: "#93c5fd",
         display: "standalone",
         icon: "src/images/icon.png",
+        icon_options: {
+          purpose: "any maskable",
+        },
         cache_busting_mode: "none",
       },
     },
