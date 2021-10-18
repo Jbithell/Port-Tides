@@ -89,8 +89,4 @@ yarn-error.log*
 .idea/
 
 
-php/vendor/
-php/pdf/*.pdf
-php/pdf/*.html
-php/tides.json
-
+data/php/vendor/
