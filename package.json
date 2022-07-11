@@ -12,7 +12,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "eslint": "^7.26.0",
+    "eslint": "^8.19.0",
     "eslint-plugin-react": "^7.23.2",
     "gatsby": "^3.4.1",
     "gatsby-plugin-i18n": "^1.0.1",
