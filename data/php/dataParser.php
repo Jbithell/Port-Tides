@@ -172,8 +172,8 @@ foreach ($tidesMonths as $month=>$data) {
 	$mpdf->SetAuthor ('port-tides.com');
 	$mpdf->SetProtection(array('print'), '');
 	$mpdf->WriteHTML($output);
-	$mpdf->Output('pdf/' . $pdf['filename'],'F');
-	file_put_contents('pdf/' . $pdf['htmlfilename'],($output.$footer));
+	$mpdf->Output(__DIR__ . '/../../static/tide-tables/' . $pdf['filename'],'F');
+	file_put_contents(__DIR__ . '/../../static/tide-tables/' . $pdf['htmlfilename'],($output.$footer));
 	$pdfs[] = $pdf;
 }
 
