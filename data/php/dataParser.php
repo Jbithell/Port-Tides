@@ -73,7 +73,7 @@ foreach ($tidesDays as $time=>$day) {
 $pdfs = [];
 foreach ($tidesMonths as $month=>$data) {
 	//Generate a PDF
-	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("m-Y",strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("m-Y",strtotime($month))) . '.html'];
+	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("Y/m",strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("Y/m",strtotime($month))) . '.html'];
 	$pdf['url'] = $pdf['filename'];
 
 	$output = '<center><div style="margin-top: 8px; margin-bottom: 2px; margin-left: 5px; margin-right: 5px;">
@@ -168,12 +168,13 @@ foreach ($tidesMonths as $month=>$data) {
 		'margin_footer' => 9
 	]);
 	$mpdf->SetHTMLFooter($footer);
-	$mpdf->SetTitle('Porthmadog Tide Times | ' .  date("F",strtotime($month)) . '/' .date("Y",strtotime($month)));
+	$mpdf->SetTitle('Porthmadog Tide Times | ' .  date("F",strtotime($month)));
 	$mpdf->SetAuthor ('port-tides.com');
 	$mpdf->SetProtection(array('print'), '');
 	$mpdf->WriteHTML($output);
-	$mpdf->Output('pdf/' . $pdf['filename'],'F');
-	file_put_contents('pdf/' . $pdf['htmlfilename'],($output.$footer));
+	mkdir(__DIR__ . '/../../static/tide-tables/' . date("Y",strtotime($month)));
+	$mpdf->Output(__DIR__ . '/../../static/tide-tables/' . $pdf['filename'],'F');
+	file_put_contents(__DIR__ . '/../../static/tide-tables/' . $pdf['htmlfilename'],($output.$footer));
 	$pdfs[] = $pdf;
 }
 
