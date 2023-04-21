@@ -49,5 +49,14 @@ module.exports = {
         precachePages: ["**/tide-tables/*"],
       },
     },
+    {
+      resolve: "gatsby-source-build-date",
+      options: {
+        locales: "en-GB",
+        options: {
+          year: "numeric",
+        },
+      },
+    },
   ],
 };
