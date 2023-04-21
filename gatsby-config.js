@@ -54,7 +54,7 @@ module.exports = {
       options: {
         locales: "en-GB",
         options: {
-          year: "long",
+          year: "numeric",
         },
       },
     },
