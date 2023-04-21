@@ -2,6 +2,13 @@ import { graphql, useStaticQuery } from "gatsby";
 import * as React from "react";
 
 const Copyright = (props) => {
+  const buildYear = useStaticQuery(graphql`
+    query {
+      currentBuildDate {
+        currentDate
+      }
+    }
+  `).currentBuildDate.currentDate;
   return (
     <>
       <div className="p-4 bg-white bg-opacity-95">
@@ -12,12 +19,6 @@ const Copyright = (props) => {
   );
 };
 
-const buildYear = useStaticQuery(graphql`
-  query {
-    currentBuildDate {
-      currentDate
-    }
-  }
-`);
+
 
 export default Copyright;
