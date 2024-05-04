@@ -188,7 +188,7 @@ $output = [
 	],
 	"pdfs" => $pdfs
 ];
-$fp = fopen('tides.json', 'w');
+$fp = fopen(__DIR__ . '/../tides.json', 'w');
 fwrite($fp, json_encode($output));
 fclose($fp);
 
