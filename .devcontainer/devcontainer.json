@@ -1,0 +1,4 @@
+{
+  "build": { "dockerfile": "Dockerfile" },
+  "postCreateCommand": "composer install -d data/php"
+}
