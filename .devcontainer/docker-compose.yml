@@ -3,12 +3,13 @@ services:
     gatsby:
         image: mcr.microsoft.com/devcontainers/typescript-node
         volumes:
-            - .:/workspace:cached
+            - ./..:/workspace:cached
         command: sleep infinity
         links:
             - php-build
     php-build:
-        dockerfile: DockerfilePHP
+        build: 
+            dockerfile: ./DockerfilePHP
         volumes:
-            - .:/workspace:cached
+            - ./..:/workspace:cached
         command: sleep infinity

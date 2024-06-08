@@ -1,13 +1,16 @@
 <?php
+echo "Running PHP Build Script\n";
 require_once __DIR__ . '/vendor/autoload.php';
 
-error_reporting(-1);
+// Show errors
+error_reporting(E_ALL);
 ini_set('display_errors', 'On');
+
 /*
 	This program is designed to convert UKHO Format 12 data to a sql table - It only works for Porthmadog!
 */
 $CONFIG = [
-	"folder" => '../rawData'
+	"folder" => __DIR__ . '/../rawData'
 ];
 /*
 

@@ -8,9 +8,8 @@
       ]
     }
   },
-  "name": "Gatsby Container",
+  "name": "Gatsby Container (build this one first)",
+  "postCreateCommand": "npm install",
   "dockerComposeFile": ["../docker-compose.yml"],
-  "service": "gatsby",
-  "shutdownAction": "none",
-  "workspaceFolder": "/workspace/"
+  "service": "gatsby"
 }

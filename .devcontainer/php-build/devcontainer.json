@@ -3,6 +3,5 @@
   "postCreateCommand": "composer install -d data/php",
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "php-build",
-  "shutdownAction": "none",
-  "workspaceFolder": "/workspace/"
+  "shutdownAction": "none"
 }
