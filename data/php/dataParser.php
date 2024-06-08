@@ -72,8 +72,7 @@ foreach ($tidesDays as $time=>$day) {
 $pdfs = [];
 foreach ($tidesMonths as $month=>$data) {
 	//Generate a PDF
-	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("Y/m",strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("Y/m",strtotime($month))) . '.html'];
-	$pdf['url'] = $pdf['filename'];
+	$pdf = ["name" => date("F Y", strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("Y/m", strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("Y/m", strtotime($month))) . '.html', "url" => strtolower(date("Y/m", strtotime($month)))];
 
 	$output = '<center><div style="margin-top: 8px; margin-bottom: 2px; margin-left: 5px; margin-right: 5px;">
 				<style>
