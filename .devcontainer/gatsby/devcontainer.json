@@ -11,5 +11,6 @@
   "name": "Gatsby Container (build this one first)",
   "postCreateCommand": "npm install",
   "dockerComposeFile": ["../docker-compose.yml"],
-  "service": "gatsby"
+  "service": "gatsby",
+  "workspaceFolder": "/workspace"
 }

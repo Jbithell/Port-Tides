@@ -8,11 +8,6 @@ ini_set('display_errors', 'On');
 
 /*
 	This program is designed to convert UKHO Format 12 data to a sql table - It only works for Porthmadog!
-*/
-$CONFIG = [
-	"folder" => __DIR__ . '/../rawData'
-];
-/*
 
 *First line
 "Port Number","Port Name",Latitude [in decimal degrees (d)d.dd positive north negative south],Longitude [in decimal degrees (dd)d.dd positive east negative west],Date [yyyymmdd],Time Interval Height Output [This sample file doesn't have fixed Time Intervals, it shows the times and heights of high and low water when they occur. But fixed Time Intervals can be created in the range between 1 minute to 120 minutes],Time Zone [+/-hhmm]
@@ -24,7 +19,8 @@ Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Ch
 
 //Begin Program
 date_default_timezone_set('Europe/London');
-$files = glob($CONFIG['folder'] . '/*.{txt}', GLOB_BRACE);
+if (!is_dir(__DIR__ . '/../../static/tide-tables/')) mkdir(__DIR__ . '/../../static/tide-tables/');
+$files = glob(__DIR__ . '/../rawData/*.{txt}', GLOB_BRACE);
 $output = [];
 $tides = [];
 foreach ($files as $file) {
@@ -175,9 +171,10 @@ foreach ($tidesMonths as $month=>$data) {
 	$mpdf->SetAuthor ('port-tides.com');
 	$mpdf->SetProtection(array('print'), '');
 	$mpdf->WriteHTML($output);
-	mkdir(__DIR__ . '/../../static/tide-tables/' . date("Y",strtotime($month)));
+	if (!is_dir(__DIR__ . '/../../static/tide-tables/' . date("Y",strtotime($month)))) mkdir(__DIR__ . '/../../static/tide-tables/' . date("Y",strtotime($month)));
 	$mpdf->Output(__DIR__ . '/../../static/tide-tables/' . $pdf['filename'],'F');
 	file_put_contents(__DIR__ . '/../../static/tide-tables/' . $pdf['htmlfilename'],($output.$footer));
+	echo "Generated PDF for " . $pdf['filename'] . "\n";
 	$pdfs[] = $pdf;
 }
 
