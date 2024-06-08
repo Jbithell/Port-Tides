@@ -1,1 +1,1 @@
-export const menuItems = [{ link: "/pdfs", label: "PDFs" }];
+export const menuItems = [{ link: "/tideTables", label: "Tide Tables" }];

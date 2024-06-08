@@ -14,14 +14,14 @@ const Page: React.FC<PageProps> = () => {
   month.setDate(1);
   const nextYear = new Date(month);
   nextYear.setFullYear(month.getFullYear() + 1);
-  const files = TidalData.pdfs.filter((element: { date: string | number | Date; }) => {
+  const files = TidalData.pdfs.filter((element: TidesJson_PDFObject) => {
     let date = new Date(element.date);
     return date < nextYear;
   });
   return (
     <Layout>
       <Center>
-        {files.map((element: TidesJson_PDFObject, index: React.Key) => (<a href={"/tide-tables/" + element.filename.replace(".pdf", "")} key={index}>{element.name}</a>))}
+        {files.map((element: TidesJson_PDFObject, index: React.Key) => (<a href={"/tide-tables/" + element.url + "/"} key={index}>{element.name}</a>))}
       </Center>
     </Layout>
   )
