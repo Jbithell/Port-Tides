@@ -180,11 +180,11 @@ foreach ($tidesMonths as $month=>$data) {
 
 $output = [
 	"schedule" => $tidesApp,
-	"tides" => [
+	/*"tides" => [
 		"rawAdjusted" => $tides,
 		"daysAdjusted" => $tidesDays,
 		"monthsAdjusted" => $tidesMonths
-	],
+	],*/
 	"pdfs" => $pdfs
 ];
 $fp = fopen(__DIR__ . '/../tides.json', 'w');

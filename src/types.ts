@@ -1,7 +1,7 @@
 export interface TidesJson_TopLevel {
   schedule: Array<TidesJson_ScheduleObject>;
   pdfs: Array<TidesJson_PDFObject>;
-  tides: {
+  /*tides: {
     rawAdjusted: {
       [unixTimestamp: number]: string;
     };
@@ -19,7 +19,7 @@ export interface TidesJson_TopLevel {
         }>;
       };
     };
-  };
+  };*/
 }
 export interface TidesJson_ScheduleObject {
   date: string;
