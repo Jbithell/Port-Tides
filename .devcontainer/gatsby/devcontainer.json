@@ -1,0 +1,16 @@
+{
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "christian-kohler.npm-intellisense",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "name": "Gatsby Container",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "gatsby",
+  "shutdownAction": "none",
+  "workspaceFolder": "/workspace/"
+}
