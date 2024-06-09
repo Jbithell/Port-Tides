@@ -8,9 +8,7 @@ import {
   useMatches,
 } from "@mantine/core";
 import React from "react";
-import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { useDisclosure } from "@mantine/hooks";
 
 export default function Layout({
   children,

@@ -1,4 +1,4 @@
-import { Table, Text } from "@mantine/core";
+import { Badge, Table, Text } from "@mantine/core";
 import React from "react";
 import { DateTime } from "luxon";
 import { TidesJson_ScheduleObject } from "../../types";
@@ -27,6 +27,10 @@ export function TideTable({ data }: { data: TidesJson_ScheduleObject[] }) {
                   weekday: "long",
                   day: "2-digit",
                 })}
+                {DateTime.fromSQL(date.date).toJSDate().setHours(0, 0, 0, 0) ==
+                new Date().setHours(0, 0, 0, 0) ? (
+                  <Badge ml="sm">Today</Badge>
+                ) : null}
               </Text>
             </Table.Td>
             <Table.Td>

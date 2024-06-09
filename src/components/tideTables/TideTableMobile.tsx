@@ -2,8 +2,7 @@ import { Badge, Group, Table, Text } from "@mantine/core";
 import React from "react";
 import { DateTime } from "luxon";
 import { TidesJson_ScheduleObject } from "../../types";
-import { IconSun, IconSunrise, IconSunset } from "@tabler/icons-react";
-import { devNull } from "os";
+import { IconSunrise, IconSunset } from "@tabler/icons-react";
 
 export function TideTableMobile({
   data,

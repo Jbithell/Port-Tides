@@ -1,26 +1,23 @@
-import * as React from "react";
-import { Link, type HeadFC, type PageProps } from "gatsby";
 import {
-  Badge,
   Button,
   Card,
   Center,
-  Container,
   Group,
-  Image,
   SimpleGrid,
+  Stack,
   Text,
   Title,
-  useMatches,
+  useMatches
 } from "@mantine/core";
-import Logo from "./../images/porthmadogCob.jpg";
-import Layout from "../components/navigation/Layout";
+import { IconArrowRight, IconTable } from "@tabler/icons-react";
+import { Link, type HeadFC, type PageProps } from "gatsby";
+import { DateTime } from "luxon";
+import * as React from "react";
 import TidalData from "../../data/tides.json";
 import { SEO } from "../components/SEO";
-import { DateTime } from "luxon";
-import { LineChart } from "@mantine/charts";
+import Layout from "../components/navigation/Layout";
+import { TideTablesIndexList } from "../components/tideTables/TidesTablesIndexList";
 import { TidesJson_ScheduleObject } from "../types";
-import { IconArrowRight, IconTable } from "@tabler/icons-react";
 
 const Page: React.FC<PageProps> = () => {
   const daysToDisplay = useMatches({ base: 5, sm: 6, md: 8, lg: 10, xl: 10 });
@@ -37,9 +34,12 @@ const Page: React.FC<PageProps> = () => {
   return (
     <Layout>
       <Center>
-        <Title order={1} size={"h1"}>
-          Porthmadog Tide Times
-        </Title>
+        <Stack align="center" gap={"sm"}>
+          <Title order={1} size={"h1"} mb={0}>
+            Porthmadog Tide Times
+          </Title>
+          <Text fw={200}>North Wales, United Kingdom</Text>
+        </Stack>
       </Center>
       <Group justify="space-between" mb="sm" mt="sm">
         <Title order={2} size={"h3"}>
@@ -119,6 +119,17 @@ const Page: React.FC<PageProps> = () => {
           </Card>
         </Link>
       </SimpleGrid>
+      <Group justify="space-between" mb="sm" mt="sm">
+        <Title order={2} size={"h3"}>
+          Monthly Tide Tables
+        </Title>
+        <Link to={"tide-tables/"}>
+          <Button rightSection={<IconArrowRight size={14} />} variant="light">
+            View All
+          </Button>
+        </Link>
+      </Group>
+      <TideTablesIndexList />
     </Layout>
   );
 };

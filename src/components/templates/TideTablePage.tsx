@@ -3,14 +3,6 @@ import { Link, type HeadFC, type PageProps } from "gatsby";
 import {
   Box,
   Button,
-  Card,
-  Center,
-  Container,
-  Group,
-  Image,
-  Table,
-  Text,
-  Title,
 } from "@mantine/core";
 import TidalData from "../../../data/tides.json";
 import { SEO } from "../../components/SEO";
@@ -18,11 +10,9 @@ import Layout from "../navigation/Layout";
 import { DateTime } from "luxon";
 import { TidesJson_PDFObject, TidesJson_ScheduleObject } from "../../types";
 import {
-  IconArrowBack,
   IconArrowLeft,
   IconDownload,
   IconFileTypePdf,
-  IconPdf,
 } from "@tabler/icons-react";
 import { TideTable } from "../tideTables/TideTable";
 import { TideTableMobile } from "../tideTables/TideTableMobile";

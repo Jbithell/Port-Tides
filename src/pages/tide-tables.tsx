@@ -1,23 +1,13 @@
-import * as React from "react";
+import { Accordion, Button, Text } from "@mantine/core";
+import { IconHome } from "@tabler/icons-react";
 import type { HeadFC, PageProps } from "gatsby";
-import {
-  Accordion,
-  Button,
-  Card,
-  Center,
-  Container,
-  Group,
-  Image,
-  SimpleGrid,
-  Text,
-} from "@mantine/core";
-import Layout from "../components/navigation/Layout";
-import { SEO } from "../components/SEO";
-import TidalData from "../../data/tides.json";
 import { Link } from "gatsby";
-import { TidesJson_PDFObject } from "../types";
-import { IconArrowLeft, IconArrowRight, IconHome } from "@tabler/icons-react";
+import * as React from "react";
+import TidalData from "../../data/tides.json";
+import { SEO } from "../components/SEO";
+import Layout from "../components/navigation/Layout";
 import { TideTablesMonthList } from "../components/tideTables/TideTablesMonthList";
+import { TidesJson_PDFObject } from "../types";
 
 const Page: React.FC<PageProps> = () => {
   const month = new Date();
@@ -25,8 +15,8 @@ const Page: React.FC<PageProps> = () => {
   month.setDate(1);
   const nextYear = new Date(month);
   nextYear.setFullYear(month.getFullYear() + 1);
-  const files = TidalData.pdfs.filter((month: TidesJson_PDFObject) => {
-    let date = new Date(month.date);
+  const files = TidalData.pdfs.filter((pdf: TidesJson_PDFObject) => {
+    let date = new Date(pdf.date);
     return date < nextYear;
   });
   const years = [
@@ -35,15 +25,16 @@ const Page: React.FC<PageProps> = () => {
         return new Date(month.date).getFullYear();
       })
     ),
-  ].map((year) => {
-    return {
-      year: year as number,
-      months: files.filter((month: TidesJson_PDFObject) => {
-        return year == new Date(month.date).getFullYear();
-      }),
-    };
-  });
-  console.log(years);
+  ]
+    .map((year) => {
+      return {
+        year: year as number,
+        months: files.filter((month: TidesJson_PDFObject) => {
+          return year == new Date(month.date).getFullYear();
+        }),
+      };
+    })
+    .reverse();
   return (
     <Layout
       title="Downloadable Tide Tables"
@@ -64,7 +55,11 @@ const Page: React.FC<PageProps> = () => {
       >
         {years.map((year) => (
           <Accordion.Item key={year.year} value={year.year + "-tab"}>
-            <Accordion.Control>{year.year}</Accordion.Control>
+            <Accordion.Control>
+              <Text size="xl" fw={500} mb={"xs"}>
+                {year.year}
+              </Text>
+            </Accordion.Control>
             <Accordion.Panel>
               <TideTablesMonthList files={year.months} />
             </Accordion.Panel>

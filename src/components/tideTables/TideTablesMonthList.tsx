@@ -1,19 +1,18 @@
-import { Badge, Card, Group, SimpleGrid, Table, Text } from "@mantine/core";
-import React from "react";
-import { DateTime } from "luxon";
-import { TidesJson_PDFObject, TidesJson_ScheduleObject } from "../../types";
+import { Card, Group, SimpleGrid, Text } from "@mantine/core";
 import {
-  IconArrowRight,
-  IconSun,
-  IconSunrise,
-  IconSunset,
+  IconDownload
 } from "@tabler/icons-react";
-import { devNull } from "os";
 import { Link } from "gatsby";
+import React from "react";
+import { TidesJson_PDFObject } from "../../types";
 
-export function TideTablesMonthList({ files }: { files: TidesJson_PDFObject[] }) {
+export function TideTablesMonthList({
+  files,
+}: {
+  files: TidesJson_PDFObject[];
+}) {
   return (
-    <SimpleGrid cols={{ base: 1, sm: 3, md: 4, lg: 5, xl: 5 }}>
+    <SimpleGrid cols={{ base: 1, sm: 3, md: 4 }}>
       {files.map((month: TidesJson_PDFObject, index: React.Key) => (
         <Link
           to={"/tide-tables/" + month.url}
@@ -25,7 +24,7 @@ export function TideTablesMonthList({ files }: { files: TidesJson_PDFObject[] })
               <Text size="xl" fw={500} mb={"xs"}>
                 {month.name}
               </Text>
-              <IconArrowRight />
+              <IconDownload />
             </Group>
           </Card>
         </Link>
