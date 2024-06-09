@@ -1,15 +1,13 @@
 <?php
+echo "Running PHP Build Script\n";
 require_once __DIR__ . '/vendor/autoload.php';
 
-error_reporting(-1);
+// Show errors
+error_reporting(E_ALL);
 ini_set('display_errors', 'On');
+
 /*
 	This program is designed to convert UKHO Format 12 data to a sql table - It only works for Porthmadog!
-*/
-$CONFIG = [
-	"folder" => '../rawData'
-];
-/*
 
 *First line
 "Port Number","Port Name",Latitude [in decimal degrees (d)d.dd positive north negative south],Longitude [in decimal degrees (dd)d.dd positive east negative west],Date [yyyymmdd],Time Interval Height Output [This sample file doesn't have fixed Time Intervals, it shows the times and heights of high and low water when they occur. But fixed Time Intervals can be created in the range between 1 minute to 120 minutes],Time Zone [+/-hhmm]
@@ -21,7 +19,8 @@ Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Ch
 
 //Begin Program
 date_default_timezone_set('Europe/London');
-$files = glob($CONFIG['folder'] . '/*.{txt}', GLOB_BRACE);
+if (!is_dir(__DIR__ . '/../../static/tide-tables/')) mkdir(__DIR__ . '/../../static/tide-tables/');
+$files = glob(__DIR__ . '/../rawData/*.{txt}', GLOB_BRACE);
 $output = [];
 $tides = [];
 foreach ($files as $file) {
@@ -38,43 +37,42 @@ foreach ($files as $file) {
 
 
 
-		if (date("I",strtotime($date)) == 1) $daylightAdjust = 3600; //Add an hour for BST
+		if (date("I", strtotime($date)) == 1) $daylightAdjust = 3600; //Add an hour for BST
 		else $daylightAdjust = 0;
 
 		//For some reason, known only to the UKHO - some of them do high/low tide in the wrong order....
-		if ($array[10] == "X") $tides[strtotime($date . " " . substr_replace($array[7], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[9];
-		else $tides[strtotime($date . " " . substr_replace($array[10], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[12];
+		if ($array[10] == "X") $tides[strtotime($date . " " . substr_replace($array[7], ":", 2, 0) . ":00") + $daylightAdjust] = $array[9];
+		else $tides[strtotime($date . " " . substr_replace($array[10], ":", 2, 0) . ":00") + $daylightAdjust] = $array[12];
 
 		if (($array[13] != "X" and count($array) == 17) or count($array) == 20) {
-			if ($array[13] != "X") $tides[strtotime($date . " " . substr_replace($array[13], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[15]; //Two tides on that day
-			else $tides[strtotime($date . " " . substr_replace($array[16], ":", 2, 0 ) . ":00")+$daylightAdjust] = $array[18]; //Two tides on that day
+			if ($array[13] != "X") $tides[strtotime($date . " " . substr_replace($array[13], ":", 2, 0) . ":00") + $daylightAdjust] = $array[15]; //Two tides on that day
+			else $tides[strtotime($date . " " . substr_replace($array[16], ":", 2, 0) . ":00") + $daylightAdjust] = $array[18]; //Two tides on that day
 		}
 	}
 }
-ksort ($tides); //Put the tides in ascending order
+ksort($tides); //Put the tides in ascending order
 $tidesDays = [];
-foreach ($tides as $time=>$height) {
+foreach ($tides as $time => $height) {
 	if (!isset($tidesDays[date("d M Y", $time)])) $tidesDays[date("d M Y", $time)] = [];
 
 	$tidesDays[date("d M Y", $time)][] = ["time" => date("H:i:s", $time), "height" => $height];
 }
 //Generate timings in the format that the app likes
 $tidesApp = [];
-foreach ($tidesDays as $time=>$day) {
-	$tidesApp[] = ["date" => date("Y-m-d", strtotime($time)), "groups" => $day];
+foreach ($tidesDays as $time => $day) {
+	$tidesApp[] = ["date" => date("Y-m-d", strtotime($time)), "groups" => $day, "sunrise" => date_sunrise(strtotime($time), SUNFUNCS_RET_STRING, 52.92, -4.13, ini_get("date.sunrise_zenith"), date("I", strtotime($time))), "sunset" => date_sunset(strtotime($time), SUNFUNCS_RET_STRING, 52.92, -4.13, ini_get("date.sunrise_zenith"), date("I", strtotime($time)))];
 }
 
 //Generate tide tables as PDFs that look nice
 $tidesMonths = [];
-foreach ($tidesDays as $time=>$day) {
+foreach ($tidesDays as $time => $day) {
 	if (!isset($tidesMonths[date("M Y", strtotime($time))])) $tidesMonths[date("M Y", strtotime($time))] = [];
 	$tidesMonths[date("M Y", strtotime($time))][$time] = $day;
 }
 $pdfs = [];
-foreach ($tidesMonths as $month=>$data) {
+foreach ($tidesMonths as $month => $data) {
 	//Generate a PDF
-	$pdf = ["name" => date("F Y",strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("Y/m",strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("Y/m",strtotime($month))) . '.html'];
-	$pdf['url'] = $pdf['filename'];
+	$pdf = ["name" => date("F Y", strtotime($month)), "date" => date("Y-m-d", strtotime($month)), "filename" => strtolower(date("Y/m", strtotime($month))) . '.pdf', "htmlfilename" => strtolower(date("Y/m", strtotime($month))) . '.html', "url" => strtolower(date("Y/m", strtotime($month)))];
 
 	$output = '<center><div style="margin-top: 8px; margin-bottom: 2px; margin-left: 5px; margin-right: 5px;">
 				<style>
@@ -94,7 +92,7 @@ foreach ($tidesMonths as $month=>$data) {
 				<table style="width: 99%; border: none;">
 					<tr style="width: 99%;">
 						<td colspan="5" style="width: 50%; border: none;">
-							<h2>' .  date("F",strtotime($month)) . '&nbsp;' . date("Y",strtotime($month)) . '</h2>
+							<h2>' .  date("F", strtotime($month)) . '&nbsp;' . date("Y", strtotime($month)) . '</h2>
 						</td>
 						<td colspan="3" style="text-align: right; width: 50%;">
 							<h2>Porthmadog</h2>
@@ -142,24 +140,25 @@ foreach ($tidesMonths as $month=>$data) {
 							</center>
 						</td>
 					</tr>';
-				foreach ($data as $dayDate=>$day) {
-					$output .= '<tr style="width: 99%; border: 1px solid black;">
+	foreach ($data as $dayDate => $day) {
+		$output .= '<tr style="width: 99%; border: 1px solid black;">
 								<td style="border: 1px solid black; text-align: right;">&nbsp;' . date('l', strtotime($dayDate)) . '&nbsp;</td>
 								<td style="border: 1px solid black; text-align: left;">&nbsp;' . date('d', strtotime($dayDate)) . '&nbsp;</td>
-								<td style="border: 1px solid black; text-align: center">' . date_sunrise(strtotime($dayDate), SUNFUNCS_RET_STRING,52.92,-4.13,ini_get("date.sunrise_zenith"),date("I",strtotime($dayDate))) . '</td>
+								<td style="border: 1px solid black; text-align: center">' . date_sunrise(strtotime($dayDate), SUNFUNCS_RET_STRING, 52.92, -4.13, ini_get("date.sunrise_zenith"), date("I", strtotime($dayDate))) . '</td>
 								<td style="border: 1px solid black; text-align: center;">&nbsp;' . date('H:i', strtotime($day[0]['time'])) . '&nbsp;</td>
 								<td style="border: 1px solid black; text-align: center;">&nbsp;' . $day[0]['height'] . 'm &nbsp;</td>';
-					if (count($day)>1) {
-						$output .= '<td style="border: 1px solid black; text-align: center;">&nbsp;' . date('H:i', strtotime($day[1]['time'])) . '&nbsp;</td>
+		if (count($day) > 1) {
+			$output .= '<td style="border: 1px solid black; text-align: center;">&nbsp;' . date('H:i', strtotime($day[1]['time'])) . '&nbsp;</td>
 									<td style="border: 1px solid black; text-align: center;">&nbsp;' . $day[1]['height'] . 'm &nbsp;</td>';
-					} else {
-						$output .= '<td style="border: 1px solid black; text-align: center;" colspan="2">&nbsp;&nbsp;</td>';
-					}
-					$output .= '<td style="border: 1px solid black; text-align:center">' . date_sunset (strtotime($dayDate), SUNFUNCS_RET_STRING,52.92,-4.13,ini_get("date.sunrise_zenith"),date("I",strtotime($dayDate))) . '</td></tr>';
-				}
+		} else {
+			$output .= '<td style="border: 1px solid black; text-align: center;" colspan="2">&nbsp;&nbsp;</td>';
+		}
+		$output .= '<td style="border: 1px solid black; text-align:center">' . date_sunset(strtotime($dayDate), SUNFUNCS_RET_STRING, 52.92, -4.13, ini_get("date.sunrise_zenith"), date("I", strtotime($dayDate))) . '</td></tr>';
+	}
 	$output .= '</table>';
 	$footer = '<span style="font-weight: bold;">Copyright Information:</span> All Tidal Data is &copy;Crown Copyright. Reproduced by permission of the Controller of Her Majesty\'s Stationery Office and the UK Hydrographic Office (www.ukho.gov.uk). No tidal data may be reproduced without the expressed permission of the ukho licencing department.<br/><span style="font-weight: bold;">Disclaimer:</span> Tidal Predictions are provided for use by all water users though the providers of this table can not be held accountable for the accuracy of this data or any accidents that result from the use of this data. <span style="font-weight: bold;">Time Zone Information: </span>All Tidal Predictions above are displayed in GMT/BST<br/><div align="right" style="font-style: italic;">Table provided by port-tides.com</div>';
-	$mpdf=new \Mpdf\Mpdf(['format' => 'A4',
+	$mpdf = new \Mpdf\Mpdf([
+		'format' => 'A4',
 		'margin_left' => 10,
 		'margin_right' => 10,
 		'margin_top' => 9,
@@ -168,30 +167,31 @@ foreach ($tidesMonths as $month=>$data) {
 		'margin_footer' => 9
 	]);
 	$mpdf->SetHTMLFooter($footer);
-	$mpdf->SetTitle('Porthmadog Tide Times | ' .  date("F",strtotime($month)));
-	$mpdf->SetAuthor ('port-tides.com');
+	$mpdf->SetTitle('Porthmadog Tide Times | ' .  date("F", strtotime($month)));
+	$mpdf->SetAuthor('port-tides.com');
 	$mpdf->SetProtection(array('print'), '');
 	$mpdf->WriteHTML($output);
-	mkdir(__DIR__ . '/../../static/tide-tables/' . date("Y",strtotime($month)));
-	$mpdf->Output(__DIR__ . '/../../static/tide-tables/' . $pdf['filename'],'F');
-	file_put_contents(__DIR__ . '/../../static/tide-tables/' . $pdf['htmlfilename'],($output.$footer));
+	if (!is_dir(__DIR__ . '/../../static/tide-tables/' . date("Y", strtotime($month)))) mkdir(__DIR__ . '/../../static/tide-tables/' . date("Y", strtotime($month)));
+	$mpdf->Output(__DIR__ . '/../../static/tide-tables/' . $pdf['filename'], 'F');
+	file_put_contents(__DIR__ . '/../../static/tide-tables/' . $pdf['htmlfilename'], ($output . $footer));
+	echo "Generated PDF for " . $pdf['filename'] . "\n";
 	$pdfs[] = $pdf;
 }
 
 
 $output = [
 	"schedule" => $tidesApp,
-	"tides" => [
+	/*"tides" => [
 		"rawAdjusted" => $tides,
 		"daysAdjusted" => $tidesDays,
 		"monthsAdjusted" => $tidesMonths
-	],
+	],*/
 	"pdfs" => $pdfs
 ];
 $fp = fopen(__DIR__ . '/../tides.json', 'w');
 fwrite($fp, json_encode($output));
 fclose($fp);
-
+$fp = fopen(__DIR__ . '/../tides-pretty.json', 'w');
+fwrite($fp, json_encode($output, JSON_PRETTY_PRINT));
+fclose($fp);
 echo "Finished";
-?>
-
