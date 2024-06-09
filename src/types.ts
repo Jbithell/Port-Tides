@@ -27,6 +27,8 @@ export interface TidesJson_ScheduleObject {
     time: string;
     height: string;
   }>;
+  sunrise: string;
+  sunset: string;
 }
 export interface TidesJson_PDFObject {
   name: string;
