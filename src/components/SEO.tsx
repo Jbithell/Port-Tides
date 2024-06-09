@@ -1,17 +1,32 @@
-import React from "react"
-import { useSiteMetadata } from "../hooks/use-site-metadata"
+import React from "react";
+import { useSiteMetadata } from "../hooks/use-site-metadata";
 
-export const SEO = ({ title, description, pathname, children }: { title?: string, description?: string, pathname?: string, children?: React.ReactNode }) => {
-  const { title: defaultTitle, description: defaultDescription, siteUrl } = useSiteMetadata()
+export const SEO = ({
+  title,
+  description,
+  pathname,
+  children,
+}: {
+  title?: string;
+  description?: string;
+  pathname?: string;
+  children?: React.ReactNode;
+}) => {
+  const {
+    title: defaultTitle,
+    description: defaultDescription,
+    siteUrl,
+  } = useSiteMetadata();
 
   const seo = {
     title: (title ? title + " | " : "") + defaultTitle,
     description: description || defaultDescription,
     url: `${siteUrl}${pathname || ``}`,
-  }
+  };
 
   return (
     <>
+      <html lang="en" />
       <title>{seo.title}</title>
       <meta charSet="utf-8" />
       <meta name="description" content={seo.description} />
@@ -22,5 +37,5 @@ export const SEO = ({ title, description, pathname, children }: { title?: string
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       {children}
     </>
-  )
-}
+  );
+};
