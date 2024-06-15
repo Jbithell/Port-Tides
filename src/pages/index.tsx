@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
   Title,
-  useMatches
+  useMatches,
 } from "@mantine/core";
 import { IconArrowRight, IconTable } from "@tabler/icons-react";
 import { Link, type HeadFC, type PageProps } from "gatsby";
@@ -130,6 +130,11 @@ const Page: React.FC<PageProps> = () => {
         </Link>
       </Group>
       <TideTablesIndexList />
+      <Link to="/ical">
+        <Text size="xl" fw={500} mb={"xs"}>
+          Add to your Calendar
+        </Text>
+      </Link>
     </Layout>
   );
 };
