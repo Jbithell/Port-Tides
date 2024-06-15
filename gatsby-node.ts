@@ -42,28 +42,33 @@ export const onPostBootstrap = function ({ reporter }: BuildArgs) {
   cal.description(
     "Tide times for Porthmadog, Borth-y-gest, Morfa Bychan and Black Rock Sands from Port-Tides.com"
   );
-  TidalData.schedule.forEach((day: TidesJson_ScheduleObject) =>
-    day.groups.forEach((tide) => {
-      cal.createEvent({
-        start: DateTime.fromSQL(day.date + " " + tide.time).toJSDate(),
-        end: DateTime.fromSQL(day.date + " " + tide.time)
-          .plus({ minutes: 30 })
-          .toJSDate(),
-        summary: `High Tide - ${tide.height}m`,
-        busystatus: ICalEventBusyStatus.FREE,
-        class: ICalEventClass.PUBLIC,
-        description: {
-          plain: `High Tide ${tide.height}m at ${tide.time}`,
-          html: `High Tide ${tide.height}m at ${tide.time}. More details at <a href="https://port-tides.com/">port-tides.com</a>`,
-        },
-        location: {
-          title: "Porthmadog",
-          address: "Harbwr Porthmadog, LL49 9AY, UK",
-        },
-        url: "https://port-tides.com/tide-tables",
-      });
+  TidalData.schedule
+    .filter((tideDay: TidesJson_ScheduleObject) => {
+      let date = new Date(tideDay.date);
+      return date >= new Date();
     })
-  );
+    .forEach((day: TidesJson_ScheduleObject) =>
+      day.groups.forEach((tide) => {
+        cal.createEvent({
+          start: DateTime.fromSQL(day.date + " " + tide.time).toJSDate(),
+          end: DateTime.fromSQL(day.date + " " + tide.time)
+            .plus({ minutes: 30 })
+            .toJSDate(),
+          summary: `High Tide - ${tide.height}m`,
+          busystatus: ICalEventBusyStatus.FREE,
+          class: ICalEventClass.PUBLIC,
+          description: {
+            plain: `High Tide ${tide.height}m at ${tide.time}`,
+            html: `High Tide ${tide.height}m at ${tide.time}. More details at <a href="https://port-tides.com/">port-tides.com</a>`,
+          },
+          location: {
+            title: "Porthmadog",
+            address: "Harbwr Porthmadog, LL49 9AY, UK",
+          },
+          url: "https://port-tides.com/tide-tables",
+        });
+      })
+    );
   fs.writeFileSync("public/porthmadog-tides.ical", cal.toString());
   reporter.success(
     `Generated iCal file for tide times at public/porthmadog-tides.ical`
