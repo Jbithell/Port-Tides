@@ -9,7 +9,7 @@ import {
   Title,
   useMatches,
 } from "@mantine/core";
-import { IconArrowRight, IconTable } from "@tabler/icons-react";
+import { IconArrowRight, IconCalendar, IconTable } from "@tabler/icons-react";
 import { Link, type HeadFC, type PageProps } from "gatsby";
 import { DateTime } from "luxon";
 import * as React from "react";
@@ -123,18 +123,20 @@ const Page: React.FC<PageProps> = () => {
         <Title order={2} size={"h3"}>
           Monthly Tide Tables
         </Title>
-        <Link to={"tide-tables/"}>
-          <Button rightSection={<IconArrowRight size={14} />} variant="light">
-            View All
-          </Button>
-        </Link>
+        <Group justify="flex-end">
+          <Link to={"ical/"}>
+            <Button rightSection={<IconCalendar size={14} />} variant="light">
+              Add to Calendar
+            </Button>
+          </Link>
+          <Link to={"tide-tables/"}>
+            <Button rightSection={<IconArrowRight size={14} />} variant="light">
+              View All
+            </Button>
+          </Link>
+        </Group>
       </Group>
       <TideTablesIndexList />
-      <Link to="/ical">
-        <Text size="xl" fw={500} mb={"xs"}>
-          Add to your Calendar
-        </Text>
-      </Link>
     </Layout>
   );
 };

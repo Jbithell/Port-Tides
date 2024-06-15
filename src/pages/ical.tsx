@@ -1,4 +1,4 @@
-import { Accordion, Button, Code, CopyButton, Text } from "@mantine/core";
+import { Accordion, Button, Code, CopyButton, Text, rem } from "@mantine/core";
 import { IconCopy, IconCopyCheck, IconHome } from "@tabler/icons-react";
 import type { HeadFC, PageProps } from "gatsby";
 import { Link } from "gatsby";
@@ -32,14 +32,23 @@ const Page: React.FC<PageProps> = () => {
             </Text>
           </Accordion.Control>
           <Accordion.Panel>
-            <Text>
+            <Text size="lg">
               <ol>
                 <li>
-                  Copy the URL <Code>{iCalUrl}</Code>
+                  Copy the URL {iCalUrl}
                   <CopyButton value={iCalUrl}>
                     {({ copied, copy }) => (
-                      <Button onClick={copy}>
-                        {copied ? <IconCopyCheck /> : <IconCopy />}
+                      <Button
+                        variant="outline"
+                        size="compact-sm"
+                        ml="sm"
+                        onClick={copy}
+                      >
+                        {copied ? (
+                          <IconCopyCheck size={16} />
+                        ) : (
+                          <IconCopy size={16} />
+                        )}
                       </Button>
                     )}
                   </CopyButton>
@@ -74,11 +83,20 @@ const Page: React.FC<PageProps> = () => {
             <Text>
               <ol>
                 <li>
-                  Copy the URL <Code>{iCalUrl}</Code>
+                  Copy the URL {iCalUrl}
                   <CopyButton value={iCalUrl}>
                     {({ copied, copy }) => (
-                      <Button onClick={copy}>
-                        {copied ? <IconCopyCheck /> : <IconCopy />}
+                      <Button
+                        variant="outline"
+                        size="compact-sm"
+                        ml="sm"
+                        onClick={copy}
+                      >
+                        {copied ? (
+                          <IconCopyCheck size={16} />
+                        ) : (
+                          <IconCopy size={16} />
+                        )}
                       </Button>
                     )}
                   </CopyButton>
@@ -110,11 +128,20 @@ const Page: React.FC<PageProps> = () => {
             <Text>
               <ol>
                 <li>
-                  Copy the URL <Code>{iCalUrl}</Code>
+                  Copy the URL {iCalUrl}
                   <CopyButton value={iCalUrl}>
                     {({ copied, copy }) => (
-                      <Button onClick={copy}>
-                        {copied ? <IconCopyCheck /> : <IconCopy />}
+                      <Button
+                        variant="outline"
+                        size="compact-sm"
+                        ml="sm"
+                        onClick={copy}
+                      >
+                        {copied ? (
+                          <IconCopyCheck size={16} />
+                        ) : (
+                          <IconCopy size={16} />
+                        )}
                       </Button>
                     )}
                   </CopyButton>
