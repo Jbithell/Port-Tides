@@ -55,17 +55,18 @@ export const onPostBootstrap = function ({ reporter }: BuildArgs) {
             .plus({ minutes: 30 })
             .toJSDate(),
           summary: `High Tide - ${tide.height}m`,
-          busystatus: ICalEventBusyStatus.FREE,
-          class: ICalEventClass.PUBLIC,
           description: {
-            plain: `High Tide ${tide.height}m at ${tide.time}`,
-            html: `High Tide ${tide.height}m at ${tide.time}. More details at <a href="https://port-tides.com/">port-tides.com</a>`,
+            plain: "",
+            html: `More details at <a href="https://port-tides.com/">port-tides.com</a>`,
           },
-          location: {
+          // Commented out to reduce file size
+          /*location: {
             title: "Porthmadog",
             address: "Harbwr Porthmadog, LL49 9AY, UK",
           },
-          url: "https://port-tides.com/tide-tables",
+          busystatus: ICalEventBusyStatus.FREE,
+          class: ICalEventClass.PUBLIC,
+          url: "https://port-tides.com/tide-tables",*/
         });
       })
     );
