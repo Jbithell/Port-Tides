@@ -1,5 +1,5 @@
-import { Accordion, Button, Text } from "@mantine/core";
-import { IconHome } from "@tabler/icons-react";
+import { Accordion, Button, Code, CopyButton, Text } from "@mantine/core";
+import { IconCopy, IconCopyCheck, IconHome } from "@tabler/icons-react";
 import type { HeadFC, PageProps } from "gatsby";
 import { Link } from "gatsby";
 import * as React from "react";
@@ -34,7 +34,16 @@ const Page: React.FC<PageProps> = () => {
           <Accordion.Panel>
             <Text>
               <ol>
-                <li>Copy the URL {iCalUrl}</li>
+                <li>
+                  Copy the URL <Code>{iCalUrl}</Code>
+                  <CopyButton value={iCalUrl}>
+                    {({ copied, copy }) => (
+                      <Button onClick={copy}>
+                        {copied ? <IconCopyCheck /> : <IconCopy />}
+                      </Button>
+                    )}
+                  </CopyButton>
+                </li>
                 <li>
                   <a href="https://calendar.google.com" target="_blank">
                     Open Google Calendar
@@ -64,7 +73,16 @@ const Page: React.FC<PageProps> = () => {
           <Accordion.Panel>
             <Text>
               <ol>
-                <li>Copy the URL {iCalUrl}</li>
+                <li>
+                  Copy the URL <Code>{iCalUrl}</Code>
+                  <CopyButton value={iCalUrl}>
+                    {({ copied, copy }) => (
+                      <Button onClick={copy}>
+                        {copied ? <IconCopyCheck /> : <IconCopy />}
+                      </Button>
+                    )}
+                  </CopyButton>
+                </li>
                 <li>
                   In Apple Calendar, click the <em>File</em> menu and choose{" "}
                   <em>New Calendar Subscription…</em>.
@@ -75,9 +93,8 @@ const Page: React.FC<PageProps> = () => {
                 </li>
                 <li>
                   A window with settings of the calendar subscription will
-                  appear. Set <em>Auto-refresh</em>
-                  to <em>Every hour</em> to keep your calendar up to date and
-                  click <em>OK</em>.
+                  appear. Set <em>Auto-refresh</em> to <em>Every hour</em> to
+                  keep your calendar up to date and click <em>OK</em>.
                 </li>
               </ol>
             </Text>
@@ -92,7 +109,16 @@ const Page: React.FC<PageProps> = () => {
           <Accordion.Panel>
             <Text>
               <ol>
-                <li>Copy the URL {iCalUrl}</li>
+                <li>
+                  Copy the URL <Code>{iCalUrl}</Code>
+                  <CopyButton value={iCalUrl}>
+                    {({ copied, copy }) => (
+                      <Button onClick={copy}>
+                        {copied ? <IconCopyCheck /> : <IconCopy />}
+                      </Button>
+                    )}
+                  </CopyButton>
+                </li>
                 <li>
                   In Outlook, click <em>Open Calendar</em> and choose{" "}
                   <em>From Internet…</em>.

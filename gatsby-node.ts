@@ -42,10 +42,14 @@ export const onPostBootstrap = function ({ reporter }: BuildArgs) {
   cal.description(
     "Tide times for Porthmadog, Borth-y-gest, Morfa Bychan and Black Rock Sands from Port-Tides.com"
   );
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const nextYear = new Date(today);
+  nextYear.setDate(today.getDate() + 365);
   TidalData.schedule
     .filter((tideDay: TidesJson_ScheduleObject) => {
       let date = new Date(tideDay.date);
-      return date >= new Date();
+      return date >= today && date <= nextYear;
     })
     .forEach((day: TidesJson_ScheduleObject) =>
       day.groups.forEach((tide) => {
@@ -54,9 +58,9 @@ export const onPostBootstrap = function ({ reporter }: BuildArgs) {
           end: DateTime.fromSQL(day.date + " " + tide.time)
             .plus({ minutes: 30 })
             .toJSDate(),
-          summary: `High Tide - ${tide.height}m`,
+          summary: `High Tide Porthmadog - ${tide.height}m`,
           description: {
-            plain: "",
+            plain: "Powered by port-tides.com",
             html: `More details at <a href="https://port-tides.com/">port-tides.com</a>`,
           },
           // Commented out to reduce file size
