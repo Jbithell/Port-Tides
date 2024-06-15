@@ -9,10 +9,24 @@ export const createPages = async function ({
 }: CreatePagesArgs) {
   TidalData.pdfs.forEach((pdf: TidesJson_PDFObject) => {
     actions.createPage({
-      path: "tide-tables/" + pdf.url,
+      path: "/tide-tables/" + pdf.url,
       component: path.resolve(`./src/components/templates/TideTablePage.tsx`),
       context: { pdf },
       defer: false,
     });
+    actions.createRedirect({
+      fromPath: "/tide-tables/" + pdf.url.replace("/", "-"),
+      toPath: "/tide-tables/" + pdf.url,
+    });
+    actions.createRedirect({
+      fromPath: "/tide-tables/" + pdf.url.replace("/", "-") + ".pdf",
+      toPath: "/tide-tables/" + pdf.url + ".pdf",
+    });
+  });
+
+  // Legacy page
+  actions.createRedirect({
+    fromPath: "/historical-tables",
+    toPath: "/tide-tables",
   });
 };
