@@ -12,10 +12,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mantine/charts": "^7.10.1",
+    "@mantine/charts": "^7.10.2",
     "@mantine/core": "^7.10.1",
     "@mantine/hooks": "^7.10.1",
-    "@tabler/icons-react": "^3.5.0",
+    "@tabler/icons-react": "^3.6.0",
     "gatsby": "^5.13.6",
     "gatsby-plugin-postcss": "^6.13.1",
     "gatsby-plugin-sitemap": "^6.13.1",
