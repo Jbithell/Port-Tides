@@ -1,5 +1,5 @@
 import { LineChart } from "@mantine/charts";
-import { Container } from "@mantine/core";
+import { Container, Paper, Text } from "@mantine/core";
 import type { HeadFC, PageProps } from "gatsby";
 import { DateTime } from "luxon";
 import * as React from "react";
@@ -7,12 +7,41 @@ import TidalData from "../../data/tides.json";
 import { SEO } from "../components/SEO";
 import Layout from "../components/navigation/Layout";
 import { TidesJson_ScheduleObject } from "../types";
+import { generateTideGraphData } from "../components/tideGraph/graphDataGenerator";
+
+interface ChartTooltipProps {
+  label: string;
+  payload: Record<string, any>[] | undefined;
+}
+
+function ChartTooltip({ label, payload }: ChartTooltipProps) {
+  if (!payload) return null;
+
+  return (
+    <Paper px="md" py="sm" withBorder shadow="md" radius="md">
+      <Text fw={500} mb={5}>
+        {new Date(Number(label) * 1000).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        })}
+      </Text>
+      {payload.map((item: any) => (
+        <Text key={item.name} c={item.color} fz="sm">
+          {item.name}: {item.value}m
+        </Text>
+      ))}
+    </Paper>
+  );
+}
 
 const Page: React.FC<PageProps> = () => {
   const startTimestamp = new Date();
   startTimestamp.setHours(0, 0, 0, 0);
   const endTimestamp = new Date(startTimestamp);
-  endTimestamp.setDate(endTimestamp.getDate() + 2);
+  endTimestamp.setDate(endTimestamp.getDate() + 0); // 2
   let startIndex = TidalData.schedule.findIndex(
     (date: TidesJson_ScheduleObject) => {
       return new Date(date.date) >= startTimestamp;
@@ -38,47 +67,40 @@ const Page: React.FC<PageProps> = () => {
       }))
     );
 
-  const highAndLowTides = [];
-  for (let i = 0; i < highTides.length; i++) {
-    highAndLowTides.push(highTides[i]);
-    if (i < highTides.length - 1) {
-      highAndLowTides.push({
-        timestamp:
-          highTides[i].timestamp +
-          (highTides[i + 1].timestamp - highTides[i].timestamp) / 2,
-        height: 0,
-      });
-    }
-  }
-  console.log(highAndLowTides);
+  const graphData = generateTideGraphData(highTides);
+
   return (
     <Layout>
       <Container>
         <LineChart
-          h={300}
-          data={highAndLowTides
-            .map((tide) => ({
-              date: tide.timestamp,
-              Height: Number(tide.height),
-            }))
-            .flat()}
+          h={800}
+          data={graphData}
           dataKey="date"
           xAxisLabel="Date"
-          yAxisLabel="Amount"
-          yAxisProps={{ domain: [0, 6] }}
-          xAxisProps={
-            {
-              //tickFormatter: (date: number) =>
-              //  DateTime.fromMillis(date * 1000).toLocaleString(
-              //    DateTime.TIME_SIMPLE
-              //  ),
-              //domain: [new Date().getTime(), nextWeek.getTime()],
-            }
-          }
+          yAxisLabel="Height"
+          yAxisProps={{
+            domain: [0, 5.5],
+            allowDataOverflow: false,
+          }}
+          xAxisProps={{
+            tickFormatter: (value: number) =>
+              new Date(value * 1000).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                hour: "numeric",
+                minute: "numeric",
+              }),
+            //domain: [new Date().getTime(), nextWeek.getTime()],
+          }}
+          tooltipProps={{
+            content: ({ label, payload }) => (
+              <ChartTooltip label={label} payload={payload} />
+            ),
+          }}
           unit="m"
           connectNulls={false}
           series={[{ name: "Height", color: "indigo.6" }]}
-          curveType="step"
+          curveType="natural"
           gridAxis="y"
         />
       </Container>
