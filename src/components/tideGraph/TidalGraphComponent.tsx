@@ -53,7 +53,10 @@ export function TidalGraphComponent({
     <LineChart
       h={800}
       data={graphData.filter(
-        (data) => data.date >= startTimestamp && data.date <= endTimestamp
+        (data) =>
+          data.date >= startTimestamp &&
+          data.date <= endTimestamp &&
+          data.Height >= 0
       )}
       gridAxis="none"
       dataKey="date"

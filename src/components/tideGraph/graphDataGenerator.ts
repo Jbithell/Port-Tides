@@ -84,12 +84,10 @@ export const graphDataGenerator = (
             Math.abs(heightDifferenceToNextTide) / 2
           ).toFixed(3)
         );
-        if (derivedHeight >= 0) {
-          plotPoints.push({
-            date: t,
-            Height: derivedHeight,
-          });
-        }
+        plotPoints.push({
+          date: t,
+          Height: derivedHeight,
+        });
       }
     }
   }
