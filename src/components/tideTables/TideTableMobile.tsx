@@ -1,8 +1,13 @@
-import { Badge, Group, Table, Text } from "@mantine/core";
+import { Badge, Button, Group, Table, Text } from "@mantine/core";
 import React from "react";
 import { DateTime } from "luxon";
 import { TidesJson_ScheduleObject } from "../../types";
-import { IconSunrise, IconSunset } from "@tabler/icons-react";
+import {
+  IconChartHistogram,
+  IconSunrise,
+  IconSunset,
+} from "@tabler/icons-react";
+import { Link } from "gatsby";
 
 export function TideTableMobile({
   data,
@@ -28,6 +33,15 @@ export function TideTableMobile({
                   </>
                 ) : null}
               </Text>
+              <Link
+                to={"/tide-graph/" + date.date}
+                title="Tidal Graph"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <Badge size="sm" variant="outline" color="gray">
+                  Graph <IconChartHistogram size={10} />
+                </Badge>
+              </Link>
             </Table.Td>
             <Table.Td>
               <Group justify="start" mt={0} mb={0}>

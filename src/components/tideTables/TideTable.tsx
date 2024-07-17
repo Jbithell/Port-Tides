@@ -2,7 +2,11 @@ import { Badge, Table, Text } from "@mantine/core";
 import React from "react";
 import { DateTime } from "luxon";
 import { TidesJson_ScheduleObject } from "../../types";
-import { IconSunrise, IconSunset } from "@tabler/icons-react";
+import {
+  IconChartHistogram,
+  IconSunrise,
+  IconSunset,
+} from "@tabler/icons-react";
 import { Link } from "gatsby";
 
 export function TideTable({ data }: { data: TidesJson_ScheduleObject[] }) {
@@ -23,23 +27,25 @@ export function TideTable({ data }: { data: TidesJson_ScheduleObject[] }) {
         {data.map((date: TidesJson_ScheduleObject, index: React.Key) => (
           <Table.Tr key={index}>
             <Table.Td>
-              <Link
-                to={"/tide-graph/" + date.date}
-                title="Tidal Graph"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <Text>
-                  {DateTime.fromSQL(date.date).toLocaleString({
-                    weekday: "long",
-                    day: "2-digit",
-                  })}
-                  {DateTime.fromSQL(date.date)
-                    .toJSDate()
-                    .setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0) ? (
-                    <Badge ml="sm">Today</Badge>
-                  ) : null}
-                </Text>
-              </Link>
+              <Text>
+                {DateTime.fromSQL(date.date).toLocaleString({
+                  weekday: "long",
+                  day: "2-digit",
+                })}
+                {DateTime.fromSQL(date.date).toJSDate().setHours(0, 0, 0, 0) ==
+                new Date().setHours(0, 0, 0, 0) ? (
+                  <Badge ml="sm">Today</Badge>
+                ) : null}
+                <Link
+                  to={"/tide-graph/" + date.date}
+                  title="Tidal Graph"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <Badge size="sm" variant="outline" color="gray" ml="sm">
+                    Graph <IconChartHistogram size={10} />
+                  </Badge>
+                </Link>
+              </Text>
             </Table.Td>
             <Table.Td>
               <Text>
