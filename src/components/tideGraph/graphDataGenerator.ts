@@ -72,21 +72,24 @@ export const graphDataGenerator = (
           ((highAndLowTides[i + 1].timestamp - t) / timeDifferenceToNextTide) *
             Math.PI +
           Math.PI / 2;
-        plotPoints.push({
-          date: t,
-          Height: Number(
-            (
-              heightDifferenceToNextTide * 0.5 * Math.sin(sinePoint) +
-              Number(
-                highAndLowTides[i].type === "high" // If next tide is low, then use that height, otherwise use the current heigh
-                  ? highAndLowTides[i + 1].height
-                  : highAndLowTides[i].height
-              ) +
-              // Add back in half the height difference - but only as a positive value
-              Math.abs(heightDifferenceToNextTide) / 2
-            ).toFixed(3)
-          ),
-        });
+        let derivedHeight = Number(
+          (
+            heightDifferenceToNextTide * 0.5 * Math.sin(sinePoint) +
+            Number(
+              highAndLowTides[i].type === "high" // If next tide is low, then use that height, otherwise use the current heigh
+                ? highAndLowTides[i + 1].height
+                : highAndLowTides[i].height
+            ) +
+            // Add back in half the height difference - but only as a positive value
+            Math.abs(heightDifferenceToNextTide) / 2
+          ).toFixed(3)
+        );
+        if (derivedHeight >= 0) {
+          plotPoints.push({
+            date: t,
+            Height: derivedHeight,
+          });
+        }
       }
     }
   }
