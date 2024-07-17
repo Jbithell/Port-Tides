@@ -24,7 +24,6 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
     previousDay: string | false;
     nextDay: string | false;
   };
-  console.log(day);
   return (
     <Layout
       title={
@@ -67,7 +66,7 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
         </>
       }
     >
-      <TidalGraph date={new Date(day.date).getTime()} />
+      <TidalGraph date={DateTime.fromSQL(day.date).toJSDate()} />
       <Box p="sm">
         <DataInformation />
       </Box>

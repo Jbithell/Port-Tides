@@ -3,8 +3,8 @@ import { TidesJson_ScheduleObject } from "../../types";
 import TidalData from "../../../data/tides.json";
 import { TidalGraphComponent } from "./TidalGraphComponent";
 
-export function TidalGraph({ date }: { date: number }) {
-  const startTimestamp = new Date();
+export function TidalGraph({ date }: { date: Date }) {
+  const startTimestamp = date;
   startTimestamp.setHours(0, 0, 0, 0);
   const endTimestamp = new Date(startTimestamp);
   endTimestamp.setDate(endTimestamp.getDate() + 1); // The charts don't work so well beyond a day
