@@ -27,17 +27,19 @@
  * This isn't very acurate because of the river Glaslyn, so the admiralty do not therefore publish tidal curves for this location, or low tide times - we have just derived them from their data
  *
  */
-import { stringify } from "querystring";
-import { TidesJson_ScheduleObject } from "../../types";
 const MIDPOINT = 2.65;
 // According to "TIME & HEIGHT DIFFERENCES FOR PREDICTING THE TIDE AT SECONDARY PORTS"
-export const generateTideGraphData = (
+export const graphDataGenerator = (
   highTides: Array<{ timestamp: number; height: number }>
 ): Array<{ date: number; Height: number }> => {
   const highAndLowTides = [];
   for (let i = 0; i < highTides.length; i++) {
-    highAndLowTides.push(highTides[i]);
+    highAndLowTides.push({
+      ...highTides[i],
+      type: "high",
+    });
     if (i < highTides.length - 1) {
+      // Add low tide
       highAndLowTides.push({
         timestamp:
           highTides[i].timestamp +
@@ -53,28 +55,35 @@ export const generateTideGraphData = (
       Height: Number(highAndLowTides[i].height),
     });
     if (i < highAndLowTides.length - 1) {
-      let differenceToNextHeight =
-        Number(highAndLowTides[i].height) -
-        Number(highAndLowTides[i + 1].height);
-      let timeDifference =
+      let heightDifferenceToNextTide =
+        Number(highAndLowTides[i + 1].height) -
+        Number(highAndLowTides[i].height);
+      let timeDifferenceToNextTide =
         highAndLowTides[i + 1].timestamp - highAndLowTides[i].timestamp;
       for (
         let t = highAndLowTides[i].timestamp;
         t < highAndLowTides[i + 1].timestamp;
-        t += 60 * 5 // 5 minutes
+        t += 60 //Data point every minute
       ) {
+        /**
+         * In a cycle from high tide to low tide, the high tide is 1/2π and the low tide is 3/2π
+         */
+        let sinePoint =
+          ((highAndLowTides[i + 1].timestamp - t) / timeDifferenceToNextTide) *
+            Math.PI +
+          Math.PI / 2;
         plotPoints.push({
           date: t,
           Height: Number(
             (
-              Number(highAndLowTides[i].height) +
-              differenceToNextHeight *
-                -1 *
-                Math.sin(
-                  
-                    ((Math.PI / 2) * (t - highAndLowTides[i].timestamp)) /
-                      timeDifference
-                )
+              heightDifferenceToNextTide * 0.5 * Math.sin(sinePoint) +
+              Number(
+                highAndLowTides[i].type === "high" // If next tide is low, then use that height, otherwise use the current heigh
+                  ? highAndLowTides[i + 1].height
+                  : highAndLowTides[i].height
+              ) +
+              // Add back in half the height difference - but only as a positive value
+              Math.abs(heightDifferenceToNextTide) / 2
             ).toFixed(3)
           ),
         });
