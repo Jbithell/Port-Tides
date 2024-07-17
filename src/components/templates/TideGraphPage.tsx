@@ -1,15 +1,17 @@
 import * as React from "react";
 import { Link, type HeadFC, type PageProps } from "gatsby";
-import { Box, Button, Text } from "@mantine/core";
+import { Badge, Box, Button, Group, Paper, rem, Text } from "@mantine/core";
 import TidalData from "../../../data/tides.json";
 import { SEO } from "../SEO";
 import Layout from "../navigation/Layout";
 import { DateTime } from "luxon";
 import { TidesJson_PDFObject, TidesJson_ScheduleObject } from "../../types";
 import {
+  IconAlertTriangleFilled,
   IconArrowLeft,
   IconArrowRight,
   IconDownload,
+  IconExclamationCircle,
   IconFileTypePdf,
   IconHome,
 } from "@tabler/icons-react";
@@ -67,6 +69,31 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
       }
     >
       <TidalGraph date={DateTime.fromSQL(day.date).toJSDate()} />
+      <Paper shadow="xl" withBorder p="xl">
+        <Group justify="flex-start" mb="sm">
+          <Badge
+            color="red"
+            size="xl"
+            leftSection={
+              <IconAlertTriangleFilled
+                style={{ width: rem(15), height: rem(15) }}
+              />
+            }
+          >
+            Warning
+          </Badge>
+          <Text fw={500} tt="uppercase">
+            Not to be used for navigation
+          </Text>
+        </Group>
+        <Text>
+          {" "}
+          Tide Graphs for Porthmadog are not published by authoritative sources
+          and should be considered highly unreliable due to seasonal river flows
+          and poorly understood tidal dynamics in the estuary. This graph is
+          produced by extrapolating from published high water times and heights.
+        </Text>
+      </Paper>
       <Box p="sm">
         <DataInformation />
       </Box>
