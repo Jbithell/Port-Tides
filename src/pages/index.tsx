@@ -9,7 +9,12 @@ import {
   Title,
   useMatches,
 } from "@mantine/core";
-import { IconArrowRight, IconCalendar, IconTable } from "@tabler/icons-react";
+import {
+  IconArrowRight,
+  IconCalendar,
+  IconChartHistogram,
+  IconTable,
+} from "@tabler/icons-react";
 import { Link, type HeadFC, type PageProps } from "gatsby";
 import { DateTime } from "luxon";
 import * as React from "react";
@@ -45,29 +50,36 @@ const Page: React.FC<PageProps> = () => {
         <Title order={2} size={"h3"}>
           High Tide Times this week
         </Title>
-        <Link
-          to={
-            "tide-tables/" +
-            DateTime.fromJSDate(nextWeek).toLocaleString({
-              year: "numeric",
-            }) +
-            "/" +
-            DateTime.fromJSDate(nextWeek).toLocaleString({
-              month: "2-digit",
-            })
-          }
-        >
-          <Button
-            leftSection={<IconTable size={14} />}
-            variant="light"
-            visibleFrom="sm"
+        <Group justify="flex-end">
+          <Link
+            to={
+              "/tide-graph/" + DateTime.fromJSDate(today).toFormat("yyyy-LL-dd")
+            }
+            style={{ textDecoration: "none" }}
           >
-            {DateTime.fromJSDate(nextWeek).toLocaleString({
-              month: "long",
-            })}{" "}
-            Tide Table
-          </Button>
-        </Link>
+            <Button
+              rightSection={<IconChartHistogram size={14} />}
+              variant="light"
+              visibleFrom="sm"
+            >
+              Today's Graph
+            </Button>
+          </Link>
+          <Link
+            to={"tide-tables/" + DateTime.fromJSDate(today).toFormat("yyyy/LL")}
+          >
+            <Button
+              leftSection={<IconTable size={14} />}
+              variant="light"
+              visibleFrom="sm"
+            >
+              {DateTime.fromJSDate(today).toLocaleString({
+                month: "long",
+              })}{" "}
+              Tide Table
+            </Button>
+          </Link>
+        </Group>
       </Group>
       <SimpleGrid cols={{ base: 1, sm: 3, md: 4, lg: 5, xl: 5 }}>
         {tides.map((element: TidesJson_ScheduleObject, index: React.Key) => (
@@ -95,21 +107,27 @@ const Page: React.FC<PageProps> = () => {
         ))}
         <Link
           to={
-            "/tide-tables/" +
-            DateTime.fromJSDate(nextWeek).toLocaleString({
-              year: "numeric",
-            }) +
-            "/" +
-            DateTime.fromJSDate(nextWeek).toLocaleString({
-              month: "2-digit",
-            })
+            "/tide-graph/" + DateTime.fromJSDate(today).toFormat("yyyy-LL-dd")
           }
           style={{ textDecoration: "none" }}
         >
           <Card shadow="xs" padding={"xs"} hiddenFrom="sm">
             <Group justify="space-between">
               <Text size="xl" fw={500}>
-                {DateTime.fromJSDate(nextWeek).toLocaleString({
+                Today's Graph
+              </Text>
+              <IconChartHistogram />
+            </Group>
+          </Card>
+        </Link>
+        <Link
+          to={"/tide-tables/" + DateTime.fromJSDate(today).toFormat("yyyy/LL")}
+          style={{ textDecoration: "none" }}
+        >
+          <Card shadow="xs" padding={"xs"} hiddenFrom="sm">
+            <Group justify="space-between">
+              <Text size="xl" fw={500}>
+                {DateTime.fromJSDate(today).toLocaleString({
                   month: "long",
                 })}{" "}
                 Tide Table

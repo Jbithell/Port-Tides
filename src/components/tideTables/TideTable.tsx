@@ -2,7 +2,12 @@ import { Badge, Table, Text } from "@mantine/core";
 import React from "react";
 import { DateTime } from "luxon";
 import { TidesJson_ScheduleObject } from "../../types";
-import { IconSunrise, IconSunset } from "@tabler/icons-react";
+import {
+  IconChartHistogram,
+  IconSunrise,
+  IconSunset,
+} from "@tabler/icons-react";
+import { Link } from "gatsby";
 
 export function TideTable({ data }: { data: TidesJson_ScheduleObject[] }) {
   return (
@@ -31,6 +36,15 @@ export function TideTable({ data }: { data: TidesJson_ScheduleObject[] }) {
                 new Date().setHours(0, 0, 0, 0) ? (
                   <Badge ml="sm">Today</Badge>
                 ) : null}
+                <Link
+                  to={"/tide-graph/" + date.date}
+                  title="Tidal Graph"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <Badge size="sm" variant="outline" color="gray" ml="sm">
+                    Graph <IconChartHistogram size={10} />
+                  </Badge>
+                </Link>
               </Text>
             </Table.Td>
             <Table.Td>

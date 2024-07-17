@@ -27,6 +27,22 @@ export const createPages = async function ({
     });
   });
 
+  TidalData.schedule.forEach((day: TidesJson_ScheduleObject, index: number) => {
+    actions.createPage({
+      path: "/tide-graph/" + day.date,
+      component: path.resolve(`./src/components/templates/TideGraphPage.tsx`),
+      context: {
+        day,
+        nextDay:
+          index < TidalData.schedule.length - 1
+            ? TidalData.schedule[index + 1].date
+            : false,
+        previousDay: index > 0 ? TidalData.schedule[index - 1].date : false,
+      },
+      defer: false,
+    });
+  });
+
   // Legacy page
   actions.createRedirect({
     fromPath: "/historical-tables",
