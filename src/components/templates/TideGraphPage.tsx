@@ -11,6 +11,7 @@ import {
   IconArrowRight,
   IconDownload,
   IconFileTypePdf,
+  IconHome,
 } from "@tabler/icons-react";
 import { TideTable } from "../tideTables/TideTable";
 import { TideTableMobile } from "../tideTables/TideTableMobile";
@@ -45,6 +46,11 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
               </Button>
             </Link>
           ) : null}
+          <Link to={"/"}>
+            <Button variant="light">
+              <IconHome size={14} />
+            </Button>
+          </Link>
           {nextDay ? (
             <Link to={"/tide-graph/" + nextDay}>
               <Button
