@@ -15,7 +15,7 @@
     "@mantine/charts": "^7.11.2",
     "@mantine/core": "^7.10.1",
     "@mantine/hooks": "^7.10.1",
-    "@tabler/icons-react": "^3.10.0",
+    "@tabler/icons-react": "^3.11.0",
     "gatsby": "^5.13.7",
     "gatsby-plugin-postcss": "^6.13.1",
     "gatsby-plugin-sitemap": "^6.13.1",
@@ -29,12 +29,12 @@
   },
   "devDependencies": {
     "@types/luxon": "^3.4.2",
-    "@types/node": "^20.14.10",
+    "@types/node": "^22.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "postcss": "^8.4.39",
-    "postcss-preset-mantine": "^1.15.0",
+    "postcss": "^8.4.40",
+    "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   }
 }
