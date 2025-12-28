@@ -20,6 +20,29 @@ export const Route = createFileRoute('/tide-tables/')({
         content: 'Downloadable tide tables for Porthmadog, Borth-y-gest, Morfa Bychan and Black Rock Sands',
       },
     ],
+
+    links: [
+      {
+        rel: 'canonical',
+        href: `https://port-tides.com/tide-tables`,
+      },
+    ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Downloadable Tide Tables',
+          description: 'Download free printable tide tables for Porthmadog, Borth-y-gest, and Black Rock Sands. Available in monthly PDF format.',
+          author: {
+            '@type': 'Organization',
+            name: 'Porthmadog Tide Times',
+          },
+          datePublished: new Date().toISOString(),
+        }),
+      },
+    ],
   })
 })
 function Page() {

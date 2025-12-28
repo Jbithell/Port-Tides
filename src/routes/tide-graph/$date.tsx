@@ -54,7 +54,35 @@ export const Route = createFileRoute("/tide-graph/$date")({
     return {
         meta: [
             { title: pageTitle },
-        ]
+        ],
+        links: [
+          {
+            rel: 'canonical',
+            href: `https://port-tides.com/tide-graph/${day.date}`,
+          },
+        ],
+        scripts: [
+          {
+            type: 'application/ld+json',
+            children: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebPage',
+              name: pageTitle,
+              description: `Porthmadog tide times for ${pageTitle}. High and low tide times and heights.`,
+              author: {
+                '@type': 'Organization',
+                name: 'Porthmadog Tide Times',
+              },
+              datePublished: new Date().toISOString(),
+              mainEntity: {
+                '@type': 'Dataset',
+                name: pageTitle,
+                description: `Tide table data for Porthmadog for ${pageTitle}`,
+                license: 'https://creativecommons.org/licenses/by/4.0/',
+              }
+            }),
+          },
+        ],
     };
   }
 });

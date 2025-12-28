@@ -6,9 +6,14 @@
 		"nodejs_compat"
 	],
 	"main": "@tanstack/react-start/server-entry",
-	"observability": {
-		"enabled": true
-	},
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    }
+  },
 	"workers_dev": false,
 	"preview_urls": true,
 	"routes": [

@@ -15,6 +15,52 @@ export const Route = createFileRoute('/ical')({
         content: 'Subscribe to Porthmadog tide times in Google Calendar, Apple Calendar, or Outlook.',
       },
     ],
+    links: [
+      {
+        rel: 'canonical',
+        href: `https://port-tides.com/ical`,
+      },
+    ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'HowTo',
+          name: 'How to add Tide Times to your Calendar',
+          description: 'A tutorial on how to subscribe to Porthmadog Tide Times in Google Calendar, Apple Calendar, or Outlook using an iCal link.',
+          totalTime: 'PT2M',
+          tool: [
+            {
+              '@type': 'HowToTool',
+              name: 'Calendar App'
+            }
+          ],
+          step: [
+            {
+              '@type': 'HowToStep',
+              name: 'Copy iCal URL',
+              text: 'Copy the dynamic iCal URL provided on the page.'
+            },
+            {
+              '@type': 'HowToStep',
+              name: 'Open Calendar Settings',
+              text: 'Navigate to the "Add Calendar" or "Subscribe" section in your calendar application (Google, Apple, or Outlook).'
+            },
+            {
+              '@type': 'HowToStep',
+              name: 'Subscribe',
+              text: 'Paste the URL and confirm the subscription to see tide times in your view.'
+            }
+          ],
+          author: {
+            '@type': 'Organization',
+            name: 'Porthmadog Tide Times',
+          },
+          datePublished: new Date().toISOString(),
+        }),
+      },
+    ],
   }),
 })
 

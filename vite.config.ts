@@ -20,6 +20,10 @@ const config = defineConfig({
         concurrency: 7, // Cloudflare workers build runs out of memory quite easily
         filter: ({ path }) => path !== "/" // Do not prerender the home page
       },
+      sitemap: {
+        enabled: true,
+        host: 'https://port-tides.com',
+      },
     }),
     viteReact(),
   ],
