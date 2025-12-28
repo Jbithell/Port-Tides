@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 //import { readFileSync } from "node:fs";
-import tidalDataFromFile from './data/tides.json';
+import tidalDataFromFile from '../data/tides.json';
 import type { TidesJson_TopLevel } from './types';
 
 //const TIDES_FILE = 'data/tides.json'
