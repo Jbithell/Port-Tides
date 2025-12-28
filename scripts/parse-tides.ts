@@ -422,8 +422,10 @@ async function main() {
   for (const dateKey of Object.keys(tidesByDay).sort()) {
      const dayTides = tidesByDay[dateKey];
      
+     
      // Calculate Sunrise/Sunset
-     const dt = DateTime.fromISO(dateKey).setZone('Europe/London');
+     // Use setZone to ensure we interpret the YYYY-MM-DD as a London date (midnight start)
+     const dt = DateTime.fromISO(dateKey, { zone: 'Europe/London' });
      // SunCalc requires Date object. 
      // Note: SunCalc returns times based on Date object provided. 
      // We want times for the day at noon to avoid edge cases?
@@ -455,7 +457,7 @@ async function main() {
 
   for (const monthKey of Object.keys(tideMonths).sort()) {
       const days = tideMonths[monthKey];
-      const dt = DateTime.fromFormat(monthKey, 'yyyy-MM');
+      const dt = DateTime.fromFormat(monthKey, 'yyyy-MM', { zone: 'Europe/London' });
       
       const year = dt.toFormat('yyyy');
       const month = dt.toFormat('MM'); // 01, 02...
