@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import fs from 'node:fs';
 import path from 'node:path';
+import PDFDocument from 'pdfkit';
 import SunCalc from 'suncalc';
 
 const RAW_DATA_DIR = path.resolve('data/rawData');
@@ -226,6 +227,156 @@ function generateHtml(monthKey: string, days: TideDay[], firstDayDt: DateTime) {
     return html;
 }
 
+function generatePdf(monthKey: string, days: TideDay[], firstDayDt: DateTime, outputPath: string) {
+    const doc = new PDFDocument({ size: 'A4', margins: { top: 9, bottom: 10, left: 10, right: 10 } });
+    const stream = fs.createWriteStream(outputPath);
+    doc.pipe(stream);
+
+    const monthName = firstDayDt.toFormat('MMMM');
+    const year = firstDayDt.toFormat('yyyy');
+
+    // --- Layout Constants ---
+    const startX = 10;
+    const rowHeight = 20;
+    
+    // Column Widths
+    const colWidths = {
+        dayName: 85,
+        dayNum: 35,
+        sunrise: 75,
+        tide1Time: 75,
+        tide1Height: 80,
+        tide2Time: 75,
+        tide2Height: 80,
+        sunset: 70
+    };
+
+    // X Coordinates calculation
+    let currentX = startX;
+    const xPos: any = {};
+    for (const [key, width] of Object.entries(colWidths)) {
+        xPos[key] = currentX;
+        currentX += width;
+    }
+    const tableWidth = currentX - startX;
+    
+    // --- Page Header ---
+    doc.font('Helvetica-Bold').fontSize(20);
+    doc.text(`${monthName} ${year}`, startX, 10, { align: 'left' });
+    doc.text('Porthmadog', startX, 10, { align: 'right', width: tableWidth });
+    doc.font('Helvetica').fontSize(18);
+    doc.text('High Water - Heights above Chart Datum', startX, 30, { align: 'center', width: tableWidth });
+
+    // --- Table Header ---
+    const headerTop = 55;
+    const headerHeight = 35; 
+
+    // Draw Main Box for Header
+    doc.lineWidth(1);
+    doc.rect(startX, headerTop, tableWidth, headerHeight).stroke();
+
+    // Vertical Lines in Header
+    doc.moveTo(xPos.sunrise, headerTop).lineTo(xPos.sunrise, headerTop + headerHeight).stroke();
+    doc.moveTo(xPos.tide1Time, headerTop).lineTo(xPos.tide1Time, headerTop + headerHeight).stroke();
+    doc.moveTo(xPos.tide1Height, headerTop).lineTo(xPos.tide1Height, headerTop + headerHeight).stroke();
+    doc.moveTo(xPos.tide2Time, headerTop).lineTo(xPos.tide2Time, headerTop + headerHeight).stroke();
+    doc.moveTo(xPos.tide2Height, headerTop).lineTo(xPos.tide2Height, headerTop + headerHeight).stroke();
+    doc.moveTo(xPos.sunset, headerTop).lineTo(xPos.sunset, headerTop + headerHeight).stroke();
+    
+    // --- Header Text ---
+    doc.fontSize(14).font('Helvetica-Bold');
+    
+    const textY = headerTop + 12;
+
+    // Date
+    doc.text('Date', startX, textY, { width: colWidths.dayName + colWidths.dayNum, align: 'center' });
+    
+    // Sunrise
+    doc.text('Sunrise', xPos.sunrise, textY, { width: colWidths.sunrise, align: 'center' });
+    
+    // Tides
+    doc.text('Time', xPos.tide1Time, textY, { width: colWidths.tide1Time, align: 'center' });
+    doc.text('Height', xPos.tide1Height, textY, { width: colWidths.tide1Height, align: 'center' });
+    doc.text('Time', xPos.tide2Time, textY, { width: colWidths.tide2Time, align: 'center' });
+    doc.text('Height', xPos.tide2Height, textY, { width: colWidths.tide2Height, align: 'center' });
+    
+    // Sunset
+    doc.text('Sunset', xPos.sunset, textY, { width: colWidths.sunset, align: 'center' });
+
+
+    // --- Data Rows ---
+    doc.font('Courier').fontSize(12);
+    let y = headerTop + headerHeight;
+    
+    // Initial top line for data is already drawn by the header box bottom
+
+    days.forEach((day, index) => {
+        const rowBottom = y + rowHeight;
+        
+        // Horizontal Line
+        doc.lineWidth(0.5);
+        doc.moveTo(startX, rowBottom).lineTo(startX + tableWidth, rowBottom).stroke();
+        
+        // Vertical Lines (Full height of table so far? Better to draw cell borders or long lines at end)
+        // Drawing cell borders row by row is safer for pagination if needed (though 1 month fits on 1 page)
+        // Let's draw vertical lines for this row
+        const diffCols = [
+            xPos.dayName, xPos.dayNum, xPos.sunrise, 
+            xPos.tide1Time, xPos.tide1Height, xPos.tide2Time, xPos.tide2Height, xPos.sunset, 
+            startX + tableWidth
+        ];
+        
+        // Skip the very first and last if we draw a rect? 
+        // Let's just draw internal verticals + borders
+        for (const vx of diffCols) {
+            doc.moveTo(vx, y).lineTo(vx, rowBottom).stroke();
+        }
+
+        // Content
+        const dt = DateTime.fromISO(day.date);
+        
+        // Date - Day Name (Right align with padding)
+        doc.text(dt.toFormat('cccc'), xPos.dayName, y + 5, { width: colWidths.dayName - 5, align: 'right' });
+        
+        // Date - Day Num (Left align or Center? Image usually shows distinct box. Let's Center)
+        doc.text(dt.toFormat('dd'), xPos.dayNum, y + 5, { width: colWidths.dayNum, align: 'center' });
+        
+        // Sunrise
+        doc.text(day.sunrise, xPos.sunrise, y + 5, { width: colWidths.sunrise, align: 'center' });
+        
+        // Tides
+        const t1 = day.groups[0];
+        const t2 = day.groups[1];
+        
+        if (t1) {
+            doc.text(t1.time.substring(0, 5), xPos.tide1Time, y + 5, { width: colWidths.tide1Time, align: 'center' });
+            doc.text(t1.height + 'm', xPos.tide1Height, y + 5, { width: colWidths.tide1Height, align: 'center' });
+        }
+        
+        if (t2) {
+             doc.text(t2.time.substring(0, 5), xPos.tide2Time, y + 5, { width: colWidths.tide2Time, align: 'center' });
+             doc.text(t2.height + 'm', xPos.tide2Height, y + 5, { width: colWidths.tide2Height, align: 'center' });
+        }
+        
+        // Sunset
+        doc.text(day.sunset, xPos.sunset, y + 5, { width: colWidths.sunset, align: 'center' });
+
+
+        y += rowHeight;
+    });
+
+    // --- Footer ---
+    y += 10;
+    doc.font("Helvetica").fontSize(12);
+    doc.text('Copyright Information: All Tidal Data is ©Crown Copyright. Reproduced by permission of the Controller of Her Majesty\'s Stationery Office and the UK Hydrographic Office (www.ukho.gov.uk). No tidal data may be reproduced without the expressed permission of the ukho licencing department.', startX, y, { width: tableWidth });
+    y += 45;
+    doc.text('Disclaimer: Tidal Predictions are provided for use by all water users though the providers of this table can not be held accountable for the accuracy of this data or any accidents that result from the use of this data. Time Zone Information: All Tidal Predictions above are displayed in GMT/BST', startX, y, { width: tableWidth });
+    y += 45;
+    doc.text('Table provided by port-tides.com', startX, y, { align: 'right', width: tableWidth });
+
+    doc.end();
+}
+
 async function main() {
   console.log('Starting Tide Parsing...');
   
@@ -300,6 +451,7 @@ async function main() {
   // 5. Generate PDFs info (and HTML files)
   const pdfs: GeneratedPdf[] = [];
   ensureDir(HTML_OUTPUT_BASE);
+  ensureDir(PDF_OUTPUT_BASE);
 
   for (const monthKey of Object.keys(tideMonths).sort()) {
       const days = tideMonths[monthKey];
@@ -309,17 +461,24 @@ async function main() {
       const month = dt.toFormat('MM'); // 01, 02...
       
       // Target Dir: public/tide-tables/YYYY
-      const targetDir = path.join(HTML_OUTPUT_BASE, year);
-      ensureDir(targetDir);
+      const htmlTargetDir = path.join(HTML_OUTPUT_BASE, year);
+      const pdfTargetDir = path.join(PDF_OUTPUT_BASE, year); 
+      ensureDir(htmlTargetDir);
+      ensureDir(pdfTargetDir);
       
       const relPath = `${year}/${month}`;
       const htmlFilename = `${month}.html`;
-      const fullHtmlPath = path.join(targetDir, htmlFilename);
+      const fullHtmlPath = path.join(htmlTargetDir, htmlFilename);
       
       // Generate HTML Content
       const htmlContent = generateHtml(monthKey, days, dt); // We need the date object
       fs.writeFileSync(fullHtmlPath, htmlContent);
       console.log(`Generated HTML: ${relPath}/${htmlFilename}`);
+
+      const pdfFilename = `${month}.pdf`;
+      const fullPdfPath = path.join(pdfTargetDir, pdfFilename);
+      generatePdf(monthKey, days, dt, fullPdfPath);
+      console.log(`Generated PDF: ${relPath}/${pdfFilename}`);
 
       pdfs.push({
           name: dt.toFormat('MMMM yyyy'),
