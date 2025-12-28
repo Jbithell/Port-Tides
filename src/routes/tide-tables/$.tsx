@@ -12,7 +12,7 @@ import {
   IconDownload,
   IconFileTypePdf,
 } from "@tabler/icons-react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 
 export const Route = createFileRoute("/tide-tables/$")({
@@ -25,10 +25,11 @@ export const Route = createFileRoute("/tide-tables/$")({
       // Check for dashed version of the date in the URL (ie 2025-12 instead of 2025/12)
        const pdfByDashed = tidalData.pdfs.find((p) => p.url.replace(/\//g, "-") === url);
        if (pdfByDashed) {
-           throw  new Response(null, {
-               status: 301,
-               headers: { Location: `/tide-tables/${pdfByDashed.url}` }
-           });
+         throw redirect({
+           to: "/tide-tables/$",
+           params: { _splat: pdfByDashed.url },
+           statusCode: 301
+         });
        }
       throw notFound();
     }
