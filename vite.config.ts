@@ -17,9 +17,8 @@ const config = defineConfig({
         enabled: true,
         crawlLinks: true, // Render dynamic routes like the tide table pages because they are linked to from pages
         autoStaticPathsDiscovery: true,
-        onSuccess: ({ page }) => {
-          console.log(`Prerendered ${page.path} to static html`)
-        },
+        concurrency: 7, // Cloudflare workers build runs out of memory quite easily
+        filter: ({ path }) => path !== "/" // Do not prerender the home page
       },
     }),
     viteReact(),
