@@ -1,0 +1,11 @@
+.root {
+  @mixin light {
+    --sunrisesunset-line-color: var(--mantine-color-orange-8);
+    --hightide-line-color: var(--mantine-color-gray-6);
+  }
+
+  @mixin dark {
+    --sunrisesunset-line-color: var(--mantine-color-yellow-4);
+    --hightide-line-color: var(--mantine-color-white);
+  }
+}

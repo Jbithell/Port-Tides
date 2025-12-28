@@ -6,5 +6,34 @@
     "pdfs",
     "porthmadog",
     "ukho"
-  ]
+  ],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.ts": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit",
+    "source.sortMembers": "explicit"
+  },
+  "prettier.trailingComma": "all",
+  "editor.defaultFormatter": "vscode.typescript-language-features",
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "cssVariables.lookupFiles": [
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
+    "**/*.less",
+    "node_modules/@mantine/core/styles.css"
+  ],
+  "files.associations": {
+    "wrangler.json": "jsonc"
+  }
 }

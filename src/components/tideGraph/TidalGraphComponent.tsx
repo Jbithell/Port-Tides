@@ -1,6 +1,7 @@
 import { LineChart } from "@mantine/charts";
 import { Paper, Text } from "@mantine/core";
 import { graphDataGenerator } from "./graphDataGenerator";
+import classes from './TidalGraph.module.css';
 
 interface ChartTooltipProps {
   label: string;
@@ -40,10 +41,14 @@ function ChartTooltip({ label, payload, highTides }: ChartTooltipProps) {
 
 export function TidalGraphComponent({
   highTides,
+  sunrise,
+  sunset,
   startTimestamp,
   endTimestamp,
 }: {
   highTides: Array<{ timestamp: number; height: number }>;
+  sunrise: number;
+  sunset: number;
   startTimestamp: number;
   endTimestamp: number;
 }) {
@@ -51,6 +56,7 @@ export function TidalGraphComponent({
   return (
     <LineChart
       h={800}
+      className={classes.root}
       data={graphData.filter(
         (data) =>
           data.date >= startTimestamp &&
@@ -103,8 +109,10 @@ export function TidalGraphComponent({
         ...highTides.flatMap((tide) => ({
           x: tide.timestamp,
           label: tide.height + "m",
-          color: "gray.6",
+          color: 'var(--hightide-line-color)',
         })),
+        { x: sunrise, label: "Sunrise", color: 'var(--sunrisesunset-line-color)' },
+        { x: sunset, label: "Sunset", color: 'var(--sunrisesunset-line-color)' },
       ]}
     />
   );

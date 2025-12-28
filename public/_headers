@@ -7,15 +7,17 @@ https://:project.:account.workers.dev/*
 /assets/*
   Cache-Control: public,max-age=31536000,immutable
 
+/tide-graph/*
+  Cache-Control: public,max-age=604800,s-maxage=31536000
 
 /tide-tables/*
-  Cache-Control: public,max-age=31536000,immutable
+  Cache-Control: public,max-age=604800,s-maxage=31536000
 
 /favicon.ico
-  Cache-Control: public,max-age=86400
+  Cache-Control: public,max-age=31536000
 
 /porthmadog-tides.ical
-  Cache-Control: no-cache
+  Cache-Control: public,max-age=86400,s-maxage=604800
 
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
