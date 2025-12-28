@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as IcalRouteImport } from './routes/ical'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TideTablesIndexRouteImport } from './routes/tide-tables/index'
 import { Route as TideTablesSplatRouteImport } from './routes/tide-tables/$'
 import { Route as TideGraphDateRouteImport } from './routes/tide-graph/$date'
 
+const SitemapRoute = SitemapRouteImport.update({
+  id: '/sitemap',
+  path: '/sitemap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IcalRoute = IcalRouteImport.update({
   id: '/ical',
   path: '/ical',
@@ -44,6 +50,7 @@ const TideGraphDateRoute = TideGraphDateRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ical': typeof IcalRoute
+  '/sitemap': typeof SitemapRoute
   '/tide-graph/$date': typeof TideGraphDateRoute
   '/tide-tables/$': typeof TideTablesSplatRoute
   '/tide-tables': typeof TideTablesIndexRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ical': typeof IcalRoute
+  '/sitemap': typeof SitemapRoute
   '/tide-graph/$date': typeof TideGraphDateRoute
   '/tide-tables/$': typeof TideTablesSplatRoute
   '/tide-tables': typeof TideTablesIndexRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ical': typeof IcalRoute
+  '/sitemap': typeof SitemapRoute
   '/tide-graph/$date': typeof TideGraphDateRoute
   '/tide-tables/$': typeof TideTablesSplatRoute
   '/tide-tables/': typeof TideTablesIndexRoute
@@ -68,15 +77,23 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ical'
+    | '/sitemap'
     | '/tide-graph/$date'
     | '/tide-tables/$'
     | '/tide-tables'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ical' | '/tide-graph/$date' | '/tide-tables/$' | '/tide-tables'
+  to:
+    | '/'
+    | '/ical'
+    | '/sitemap'
+    | '/tide-graph/$date'
+    | '/tide-tables/$'
+    | '/tide-tables'
   id:
     | '__root__'
     | '/'
     | '/ical'
+    | '/sitemap'
     | '/tide-graph/$date'
     | '/tide-tables/$'
     | '/tide-tables/'
@@ -85,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   IcalRoute: typeof IcalRoute
+  SitemapRoute: typeof SitemapRoute
   TideGraphDateRoute: typeof TideGraphDateRoute
   TideTablesSplatRoute: typeof TideTablesSplatRoute
   TideTablesIndexRoute: typeof TideTablesIndexRoute
@@ -92,6 +110,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap': {
+      id: '/sitemap'
+      path: '/sitemap'
+      fullPath: '/sitemap'
+      preLoaderRoute: typeof SitemapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ical': {
       id: '/ical'
       path: '/ical'
@@ -133,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   IcalRoute: IcalRoute,
+  SitemapRoute: SitemapRoute,
   TideGraphDateRoute: TideGraphDateRoute,
   TideTablesSplatRoute: TideTablesSplatRoute,
   TideTablesIndexRoute: TideTablesIndexRoute,
