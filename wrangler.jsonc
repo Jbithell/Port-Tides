@@ -10,6 +10,7 @@
 		"enabled": true
 	},
 	"workers_dev": false,
+	"preview_urls": true,
 	"routes": [
     {
       "pattern": "port-tides.com",
