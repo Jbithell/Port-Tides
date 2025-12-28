@@ -229,6 +229,8 @@ function generateHtml(monthKey: string, days: TideDay[], firstDayDt: DateTime) {
 
 function generatePdf(monthKey: string, days: TideDay[], firstDayDt: DateTime, outputPath: string) {
     const doc = new PDFDocument({ size: 'A4', margins: { top: 9, bottom: 10, left: 10, right: 10 } });
+    doc.info.Title = `Porthmadog Tide Times - ${monthKey}`;
+    doc.info.Author = 'Port-Tides.com';
     const stream = fs.createWriteStream(outputPath);
     doc.pipe(stream);
 
