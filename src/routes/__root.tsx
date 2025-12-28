@@ -36,24 +36,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <MantineProvider theme={theme}>
       <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Dev Tools',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
-        <Scripts />
-      </body>
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          {children}
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Dev Tools',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+          <Scripts />
+          {/* Cloudflare Web Analytics */}
+          <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "76db1fe9db1d4f84a59c500789b9d26e"}'
+          />
+          {/* End Cloudflare Web Analytics */}
+        </body>
       </html>
     </MantineProvider>
   )
