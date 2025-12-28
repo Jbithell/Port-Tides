@@ -13,82 +13,73 @@ import {
   IconArrowRight,
   IconHome,
 } from "@tabler/icons-react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 // Use relative path for data to be safe or verify alias
 import { DataInformation } from "@/components/navigation/DataInformation";
 import Layout from "@/components/navigation/Layout";
-import { TidalGraph } from "@/components/tideGraph/TidalGraph";
-import { getTides } from "@/readTideTimes";
+import { TidalGraphComponent } from "@/components/tideGraph/TidalGraphComponent";
+import { getTidesForGraph } from "@/readTideTimes";
 
 export const Route = createFileRoute("/tide-graph/$date")({
   loader: async ({ params }) => {
     const { date } = params;
-    const tidalData = await getTides();
-    const index = tidalData.schedule.findIndex((d) => d.date === date);
-
-    if (index === -1) {
-      throw notFound();
-    }
-
-    const day = tidalData.schedule[index];
-    const nextDay: string | false =
-      index < tidalData.schedule.length - 1
-        ? tidalData.schedule[index + 1].date
-        : false;
-    const previousDay: string | false = index > 0 ? tidalData.schedule[index - 1].date : false;
-
-    return { tidalData,day, nextDay, previousDay };
+    const { day, nextDay, previousDay, highTides, graphStartTimestamp, graphEndTimestamp } = await getTidesForGraph({
+      data: {
+        date,
+      },
+    });
+    return { day, nextDay, previousDay, highTides, graphStartTimestamp, graphEndTimestamp };
   },
   component: TideGraphPageComponent,
   head: ({ loaderData }) => {
     const day = loaderData?.day;
     if (!day) return { meta: [] };
-      const pageTitle =
+    const pageTitle =
       DateTime.fromSQL(day.date).toLocaleString({
         day: "numeric",
         month: "long",
         year: "numeric",
       }) + " Porthmadog Tide Graph";
-      
+
     return {
-        meta: [
-            { title: pageTitle },
-        ],
-        links: [
-          {
-            rel: 'canonical',
-            href: `https://port-tides.com/tide-graph/${day.date}`,
-          },
-        ],
-        scripts: [
-          {
-            type: 'application/ld+json',
-            children: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebPage',
+      meta: [
+        { title: pageTitle },
+      ],
+      links: [
+        {
+          rel: 'canonical',
+          href: `https://port-tides.com/tide-graph/${day.date}`,
+        },
+      ],
+      scripts: [
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: pageTitle,
+            description: `Porthmadog tide times for ${pageTitle}. High and low tide times and heights.`,
+            author: {
+              '@type': 'Organization',
+              name: 'Porthmadog Tide Times',
+            },
+            datePublished: new Date().toISOString(),
+            mainEntity: {
+              '@type': 'Dataset',
               name: pageTitle,
-              description: `Porthmadog tide times for ${pageTitle}. High and low tide times and heights.`,
-              author: {
-                '@type': 'Organization',
-                name: 'Porthmadog Tide Times',
-              },
-              datePublished: new Date().toISOString(),
-              mainEntity: {
-                '@type': 'Dataset',
-                name: pageTitle,
-                description: `Tide table data for Porthmadog for ${pageTitle}`,
-                license: 'https://creativecommons.org/licenses/by/4.0/',
-              }
-            }),
-          },
-        ],
+              description: `Tide table data for Porthmadog for ${pageTitle}`,
+              license: 'https://creativecommons.org/licenses/by/4.0/',
+            }
+          }),
+        },
+      ],
     };
   }
 });
 
 function TideGraphPageComponent() {
-  const { tidalData, day, nextDay, previousDay } = Route.useLoaderData();
+  const { day, nextDay, previousDay, highTides, graphStartTimestamp, graphEndTimestamp } = Route.useLoaderData();
 
   return (
     <Layout
@@ -132,7 +123,11 @@ function TideGraphPageComponent() {
         </>
       }
     >
-      <TidalGraph date={DateTime.fromSQL(day.date).toJSDate()} tidalData={tidalData} />
+      <TidalGraphComponent
+        highTides={highTides}
+        startTimestamp={graphStartTimestamp.getTime() / 1000}
+        endTimestamp={graphEndTimestamp.getTime() / 1000}
+      />
       <Paper shadow="xl" withBorder p="xl">
         <Group justify="flex-start" mb="sm">
           <Badge
