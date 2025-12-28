@@ -1,13 +1,13 @@
 import { Badge, Table, Text } from "@mantine/core";
-import React from "react";
-import { DateTime } from "luxon";
-import { TidesJson_ScheduleObject } from "../../types";
 import {
   IconChartHistogram,
   IconSunrise,
   IconSunset,
 } from "@tabler/icons-react";
-import { Link } from "gatsby";
+import { Link } from "@tanstack/react-router";
+import { DateTime } from "luxon";
+import React from "react";
+import { TidesJson_ScheduleObject } from "../../types";
 
 export function TideTable({ data }: { data: TidesJson_ScheduleObject[] }) {
   return (

@@ -1,0 +1,23 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "port-tides",
+	"compatibility_date": "2025-12-17",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": "@tanstack/react-start/server-entry",
+	"observability": {
+		"enabled": true
+	},
+	"workers_dev": false,
+	"routes": [
+    {
+      "pattern": "port-tides.com",
+      "custom_domain": true
+    },
+		{
+      "pattern": "www.port-tides.com",
+      "custom_domain": true
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import { Card, Group, SimpleGrid, Text } from "@mantine/core";
 import {
   IconDownload
 } from "@tabler/icons-react";
-import { Link } from "gatsby";
+import { Link } from "@tanstack/react-router";
 import React from "react";
 import { TidesJson_PDFObject } from "../../types";
 

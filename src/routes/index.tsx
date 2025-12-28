@@ -1,3 +1,4 @@
+import { getTides } from "@/readTideTimes";
 import {
   Button,
   Card,
@@ -15,23 +16,28 @@ import {
   IconChartHistogram,
   IconTable,
 } from "@tabler/icons-react";
-import { Link, type HeadFC, type PageProps } from "gatsby";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import * as React from "react";
-import TidalData from "../../data/tides.json";
-import { SEO } from "../components/SEO";
 import Layout from "../components/navigation/Layout";
 import { TideTablesIndexList } from "../components/tideTables/TidesTablesIndexList";
-import { TidesJson_ScheduleObject } from "../types";
 
-const Page: React.FC<PageProps> = () => {
+export const Route = createFileRoute('/')({
+  component: App,
+  loader: async () => {
+    return getTides()
+  },
+})
+
+function App() {
+  const tidalData = Route.useLoaderData()
   const daysToDisplay = useMatches({ base: 5, sm: 6, md: 8, lg: 10, xl: 10 });
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const nextWeek = new Date(today);
   nextWeek.setDate(today.getDate() + daysToDisplay);
-  const tides = TidalData.schedule.filter(
-    (tideDay: TidesJson_ScheduleObject) => {
+  const tides = tidalData.schedule.filter(
+    (tideDay) => {
       let date = new Date(tideDay.date);
       return date >= today && date <= nextWeek;
     }
@@ -82,7 +88,7 @@ const Page: React.FC<PageProps> = () => {
         </Group>
       </Group>
       <SimpleGrid cols={{ base: 1, sm: 3, md: 4, lg: 5, xl: 5 }}>
-        {tides.map((element: TidesJson_ScheduleObject, index: React.Key) => (
+        {tides.map((element, index: React.Key) => (
           <Card shadow="xs" padding={"xs"} key={index}>
             <Text size="xl" fw={500} mb={"xs"}>
               {DateTime.fromSQL(element.date).toLocaleString({
@@ -142,23 +148,19 @@ const Page: React.FC<PageProps> = () => {
           Monthly Tide Tables
         </Title>
         <Group justify="flex-end">
-          <Link to={"ical/"}>
+          <Link to={"/ical"}>
             <Button rightSection={<IconCalendar size={14} />} variant="light">
               Add to Calendar
             </Button>
           </Link>
-          <Link to={"tide-tables/"}>
+          <Link to={"/tide-tables"}>
             <Button rightSection={<IconArrowRight size={14} />} variant="light">
               View All
             </Button>
           </Link>
         </Group>
       </Group>
-      <TideTablesIndexList />
+      <TideTablesIndexList tidalData={tidalData} />
     </Layout>
   );
 };
-
-export default Page;
-
-export const Head: HeadFC = () => <SEO />;

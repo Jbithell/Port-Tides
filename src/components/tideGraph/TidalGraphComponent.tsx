@@ -1,6 +1,5 @@
-import React from "react";
-import { Paper, Text } from "@mantine/core";
 import { LineChart } from "@mantine/charts";
+import { Paper, Text } from "@mantine/core";
 import { graphDataGenerator } from "./graphDataGenerator";
 
 interface ChartTooltipProps {

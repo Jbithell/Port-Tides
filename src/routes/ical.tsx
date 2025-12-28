@@ -1,17 +1,25 @@
-import { Accordion, Button, Code, CopyButton, Text, rem } from "@mantine/core";
+import { Accordion, Button, CopyButton, Text } from "@mantine/core";
 import { IconCopy, IconCopyCheck, IconHome } from "@tabler/icons-react";
-import type { HeadFC, PageProps } from "gatsby";
-import { Link } from "gatsby";
-import * as React from "react";
-import TidalData from "../../data/tides.json";
-import { SEO } from "../components/SEO";
+import { createFileRoute, Link } from '@tanstack/react-router';
 import Layout from "../components/navigation/Layout";
-import { TideTablesMonthList } from "../components/tideTables/TideTablesMonthList";
-import { TidesJson_PDFObject } from "../types";
-import { useLocation } from "@reach/router";
 
-const Page: React.FC<PageProps> = () => {
-  const { origin } = useLocation();
+export const Route = createFileRoute('/ical')({
+  component: PostsIndexComponent,
+  head: () => ({
+    meta: [
+      {
+        title: 'Tide Times in your Calendar - Porthmadog Tide Times',
+      },
+      {
+        name: 'description',
+        content: 'Subscribe to Porthmadog tide times in Google Calendar, Apple Calendar, or Outlook.',
+      },
+    ],
+  }),
+})
+
+function PostsIndexComponent() {
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const iCalUrl = origin + "/porthmadog-tides.ical";
   return (
     <Layout
@@ -166,6 +174,3 @@ const Page: React.FC<PageProps> = () => {
     </Layout>
   );
 };
-export default Page;
-
-export const Head: HeadFC = () => <SEO title="Tide Times in your calendar" />;

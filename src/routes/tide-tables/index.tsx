@@ -1,27 +1,42 @@
 import { Accordion, Button, Text } from "@mantine/core";
 import { IconHome } from "@tabler/icons-react";
-import type { HeadFC, PageProps } from "gatsby";
-import { Link } from "gatsby";
-import * as React from "react";
-import TidalData from "../../data/tides.json";
-import { SEO } from "../components/SEO";
-import Layout from "../components/navigation/Layout";
-import { TideTablesMonthList } from "../components/tideTables/TideTablesMonthList";
-import { TidesJson_PDFObject } from "../types";
-
-const Page: React.FC<PageProps> = () => {
+import { createFileRoute, Link } from '@tanstack/react-router';
+import Layout from "../../components/navigation/Layout";
+import { TideTablesMonthList } from "../../components/tideTables/TideTablesMonthList";
+import { getTides } from "../../readTideTimes";
+export const Route = createFileRoute('/tide-tables/')({
+  component: Page,
+  loader: async () => {
+    const tidalData = await getTides();
+    return { tidalData };
+  },
+  head: () => ({
+    meta: [
+      {
+        title: 'Downloadable Tide Tables | Porthmadog Tide Times',
+      },
+      {
+        name: 'description',
+        content: 'Downloadable tide tables for Porthmadog, Borth-y-gest, Morfa Bychan and Black Rock Sands',
+      },
+    ],
+  })
+})
+function Page() {
   const month = new Date();
   month.setHours(0, 0, 0, 0);
   month.setDate(1);
   const nextYear = new Date(month);
   nextYear.setFullYear(month.getFullYear() + 1);
-  const files = TidalData.pdfs.filter((pdf: TidesJson_PDFObject) => {
+
+  const { tidalData } = Route.useLoaderData();
+  const files = tidalData.pdfs.filter((pdf) => {
     let date = new Date(pdf.date);
     return date < nextYear;
   });
   const years = [
     ...new Set(
-      files.map((month: TidesJson_PDFObject) => {
+      files.map((month) => {
         return new Date(month.date).getFullYear();
       })
     ),
@@ -29,7 +44,7 @@ const Page: React.FC<PageProps> = () => {
     .map((year) => {
       return {
         year: year as number,
-        months: files.filter((month: TidesJson_PDFObject) => {
+        months: files.filter((month) => {
           return year == new Date(month.date).getFullYear();
         }),
       };
@@ -69,7 +84,3 @@ const Page: React.FC<PageProps> = () => {
     </Layout>
   );
 };
-
-export default Page;
-
-export const Head: HeadFC = () => <SEO title="Downloadable Tide Tables" />;

@@ -1,31 +1,67 @@
-import * as React from "react";
-import { Link, type HeadFC, type PageProps } from "gatsby";
-import { Badge, Box, Button, Group, Paper, rem, Text } from "@mantine/core";
-import TidalData from "../../../data/tides.json";
-import { SEO } from "../SEO";
-import Layout from "../navigation/Layout";
-import { DateTime } from "luxon";
-import { TidesJson_PDFObject, TidesJson_ScheduleObject } from "../../types";
+import {
+  Badge,
+  Box,
+  Button,
+  Group,
+  Paper,
+  rem,
+  Text,
+} from "@mantine/core";
 import {
   IconAlertTriangleFilled,
   IconArrowLeft,
   IconArrowRight,
-  IconDownload,
-  IconExclamationCircle,
-  IconFileTypePdf,
   IconHome,
 } from "@tabler/icons-react";
-import { TideTable } from "../tideTables/TideTable";
-import { TideTableMobile } from "../tideTables/TideTableMobile";
-import { DataInformation } from "../navigation/DataInformation";
-import { TidalGraph } from "../tideGraph/TidalGraph";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { DateTime } from "luxon";
+// Use relative path for data to be safe or verify alias
+import { DataInformation } from "@/components/navigation/DataInformation";
+import Layout from "@/components/navigation/Layout";
+import { TidalGraph } from "@/components/tideGraph/TidalGraph";
+import { getTides } from "@/readTideTimes";
 
-const Page: React.FC<PageProps> = ({ pageContext }) => {
-  const { day, previousDay, nextDay } = pageContext as {
-    day: TidesJson_ScheduleObject;
-    previousDay: string | false;
-    nextDay: string | false;
-  };
+export const Route = createFileRoute("/tide-graph/$date")({
+  loader: async ({ params }) => {
+    const { date } = params;
+    const tidalData = await getTides();
+    const index = tidalData.schedule.findIndex((d) => d.date === date);
+
+    if (index === -1) {
+      throw notFound();
+    }
+
+    const day = tidalData.schedule[index];
+    const nextDay: string | false =
+      index < tidalData.schedule.length - 1
+        ? tidalData.schedule[index + 1].date
+        : false;
+    const previousDay: string | false = index > 0 ? tidalData.schedule[index - 1].date : false;
+
+    return { tidalData,day, nextDay, previousDay };
+  },
+  component: TideGraphPageComponent,
+  head: ({ loaderData }) => {
+    const day = loaderData?.day;
+    if (!day) return { meta: [] };
+      const pageTitle =
+      DateTime.fromSQL(day.date).toLocaleString({
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }) + " Porthmadog Tide Graph";
+      
+    return {
+        meta: [
+            { title: pageTitle },
+        ]
+    };
+  }
+});
+
+function TideGraphPageComponent() {
+  const { tidalData, day, nextDay, previousDay } = Route.useLoaderData();
+
   return (
     <Layout
       title={
@@ -38,7 +74,7 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
       headerButtons={
         <>
           {previousDay ? (
-            <Link to={"/tide-graph/" + previousDay}>
+            <Link to={"/tide-graph/$date"} params={{ date: previousDay }}>
               <Button leftSection={<IconArrowLeft size={14} />} variant="light">
                 {DateTime.fromSQL(previousDay).toLocaleString({
                   day: "numeric",
@@ -53,7 +89,7 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
             </Button>
           </Link>
           {nextDay ? (
-            <Link to={"/tide-graph/" + nextDay}>
+            <Link to={"/tide-graph/$date"} params={{ date: nextDay }}>
               <Button
                 leftSection={<IconArrowRight size={14} />}
                 variant="light"
@@ -68,7 +104,7 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
         </>
       }
     >
-      <TidalGraph date={DateTime.fromSQL(day.date).toJSDate()} />
+      <TidalGraph date={DateTime.fromSQL(day.date).toJSDate()} tidalData={tidalData} />
       <Paper shadow="xl" withBorder p="xl">
         <Group justify="flex-start" mb="sm">
           <Badge
@@ -99,17 +135,4 @@ const Page: React.FC<PageProps> = ({ pageContext }) => {
       </Box>
     </Layout>
   );
-};
-
-export default Page;
-
-export const Head: HeadFC = ({ pageContext }) => {
-  const { day } = pageContext as { day: TidesJson_PDFObject };
-  const pageTitle =
-    DateTime.fromSQL(day.date).toLocaleString({
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }) + " Porthmadog Tide Graph";
-  return <SEO title={pageTitle} />;
-};
+}

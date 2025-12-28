@@ -19,7 +19,8 @@ Time [24 hour format hhmm],Event [High or Low Water H/L],Height [metres above Ch
 
 //Begin Program
 date_default_timezone_set('Europe/London');
-if (!is_dir(__DIR__ . '/../../static/tide-tables/')) mkdir(__DIR__ . '/../../static/tide-tables/');
+if (!is_dir(__DIR__ . '/../../public/tide-tables/'))
+	mkdir(__DIR__ . '/../../public/tide-tables/');
 $files = glob(__DIR__ . '/../rawData/*.{txt}', GLOB_BRACE);
 $output = [];
 $tides = [];
@@ -29,31 +30,40 @@ foreach ($files as $file) {
 	$data = str_replace("\n", ",", $data);
 	$data = explode('"0484"', $data);
 	foreach ($data as $line) {
-		if ($line == '') continue;
-		$array =  explode(",", $line);
-		if (count($array) != 20 and count($array) != 17) continue;
+		if ($line == '')
+			continue;
+		$array = explode(",", $line);
+		if (count($array) != 20 and count($array) != 17)
+			continue;
 
 		$date = date("d M Y", strtotime($array[4])); //Date for next iteration
 
 
 
-		if (date("I", strtotime($date)) == 1) $daylightAdjust = 3600; //Add an hour for BST
-		else $daylightAdjust = 0;
+		if (date("I", strtotime($date)) == 1)
+			$daylightAdjust = 3600; //Add an hour for BST
+		else
+			$daylightAdjust = 0;
 
 		//For some reason, known only to the UKHO - some of them do high/low tide in the wrong order....
-		if ($array[10] == "X") $tides[strtotime($date . " " . substr_replace($array[7], ":", 2, 0) . ":00") + $daylightAdjust] = $array[9];
-		else $tides[strtotime($date . " " . substr_replace($array[10], ":", 2, 0) . ":00") + $daylightAdjust] = $array[12];
+		if ($array[10] == "X")
+			$tides[strtotime($date . " " . substr_replace($array[7], ":", 2, 0) . ":00") + $daylightAdjust] = $array[9];
+		else
+			$tides[strtotime($date . " " . substr_replace($array[10], ":", 2, 0) . ":00") + $daylightAdjust] = $array[12];
 
 		if (($array[13] != "X" and count($array) == 17) or count($array) == 20) {
-			if ($array[13] != "X") $tides[strtotime($date . " " . substr_replace($array[13], ":", 2, 0) . ":00") + $daylightAdjust] = $array[15]; //Two tides on that day
-			else $tides[strtotime($date . " " . substr_replace($array[16], ":", 2, 0) . ":00") + $daylightAdjust] = $array[18]; //Two tides on that day
+			if ($array[13] != "X")
+				$tides[strtotime($date . " " . substr_replace($array[13], ":", 2, 0) . ":00") + $daylightAdjust] = $array[15]; //Two tides on that day
+			else
+				$tides[strtotime($date . " " . substr_replace($array[16], ":", 2, 0) . ":00") + $daylightAdjust] = $array[18]; //Two tides on that day
 		}
 	}
 }
 ksort($tides); //Put the tides in ascending order
 $tidesDays = [];
 foreach ($tides as $time => $height) {
-	if (!isset($tidesDays[date("d M Y", $time)])) $tidesDays[date("d M Y", $time)] = [];
+	if (!isset($tidesDays[date("d M Y", $time)]))
+		$tidesDays[date("d M Y", $time)] = [];
 
 	$tidesDays[date("d M Y", $time)][] = ["time" => date("H:i:s", $time), "height" => $height];
 }
@@ -66,7 +76,8 @@ foreach ($tidesDays as $time => $day) {
 //Generate tide tables as PDFs that look nice
 $tidesMonths = [];
 foreach ($tidesDays as $time => $day) {
-	if (!isset($tidesMonths[date("M Y", strtotime($time))])) $tidesMonths[date("M Y", strtotime($time))] = [];
+	if (!isset($tidesMonths[date("M Y", strtotime($time))]))
+		$tidesMonths[date("M Y", strtotime($time))] = [];
 	$tidesMonths[date("M Y", strtotime($time))][$time] = $day;
 }
 $pdfs = [];
@@ -92,7 +103,7 @@ foreach ($tidesMonths as $month => $data) {
 				<table style="width: 99%; border: none;">
 					<tr style="width: 99%;">
 						<td colspan="5" style="width: 50%; border: none;">
-							<h2>' .  date("F", strtotime($month)) . '&nbsp;' . date("Y", strtotime($month)) . '</h2>
+							<h2>' . date("F", strtotime($month)) . '&nbsp;' . date("Y", strtotime($month)) . '</h2>
 						</td>
 						<td colspan="3" style="text-align: right; width: 50%;">
 							<h2>Porthmadog</h2>
@@ -167,13 +178,14 @@ foreach ($tidesMonths as $month => $data) {
 		'margin_footer' => 9
 	]);
 	$mpdf->SetHTMLFooter($footer);
-	$mpdf->SetTitle('Porthmadog Tide Times | ' .  date("F", strtotime($month)));
+	$mpdf->SetTitle('Porthmadog Tide Times | ' . date("F", strtotime($month)));
 	$mpdf->SetAuthor('port-tides.com');
 	$mpdf->SetProtection(array('print'), '');
 	$mpdf->WriteHTML($output);
-	if (!is_dir(__DIR__ . '/../../static/tide-tables/' . date("Y", strtotime($month)))) mkdir(__DIR__ . '/../../static/tide-tables/' . date("Y", strtotime($month)));
-	$mpdf->Output(__DIR__ . '/../../static/tide-tables/' . $pdf['filename'], 'F');
-	file_put_contents(__DIR__ . '/../../static/tide-tables/' . $pdf['htmlfilename'], ($output . $footer));
+	if (!is_dir(__DIR__ . '/../../public/tide-tables/' . date("Y", strtotime($month))))
+		mkdir(__DIR__ . '/../../public/tide-tables/' . date("Y", strtotime($month)));
+	$mpdf->Output(__DIR__ . '/../../public/tide-tables/' . $pdf['filename'], 'F');
+	file_put_contents(__DIR__ . '/../../public/tide-tables/' . $pdf['htmlfilename'], ($output . $footer));
 	echo "Generated PDF for " . $pdf['filename'] . "\n";
 	$pdfs[] = $pdf;
 }
