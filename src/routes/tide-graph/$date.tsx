@@ -125,6 +125,8 @@ function TideGraphPageComponent() {
     >
       <TidalGraphComponent
         highTides={highTides}
+        sunrise={DateTime.fromSQL(day.date + " " + day.sunrise).toMillis() / 1000}
+        sunset={DateTime.fromSQL(day.date + " " + day.sunset).toMillis() / 1000}
         startTimestamp={graphStartTimestamp.getTime() / 1000}
         endTimestamp={graphEndTimestamp.getTime() / 1000}
       />
