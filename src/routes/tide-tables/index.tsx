@@ -3,12 +3,12 @@ import { IconHome } from "@tabler/icons-react";
 import { createFileRoute, Link } from '@tanstack/react-router';
 import Layout from "../../components/navigation/Layout";
 import { TideTablesMonthList } from "../../components/tideTables/TideTablesMonthList";
-import { getTides } from "../../readTideTimes";
+import { getPDFs } from "../../readTideTimes";
 export const Route = createFileRoute('/tide-tables/')({
   component: Page,
   loader: async () => {
-    const tidalData = await getTides();
-    return { tidalData };
+    const pdfs = await getPDFs();
+    return { pdfs };
   },
   head: () => ({
     meta: [
@@ -52,8 +52,8 @@ function Page() {
   const nextYear = new Date(month);
   nextYear.setFullYear(month.getFullYear() + 1);
 
-  const { tidalData } = Route.useLoaderData();
-  const files = tidalData.pdfs.filter((pdf) => {
+  const { pdfs } = Route.useLoaderData();
+  const files = pdfs.filter((pdf) => {
     let date = new Date(pdf.date);
     return date < nextYear;
   });
