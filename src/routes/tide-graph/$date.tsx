@@ -3,9 +3,10 @@ import {
   Box,
   Button,
   Group,
+  Modal,
   Paper,
   rem,
-  Text,
+  Text
 } from "@mantine/core";
 import {
   IconAlertTriangleFilled,
@@ -18,8 +19,9 @@ import { DateTime } from "luxon";
 // Use relative path for data to be safe or verify alias
 import { DataInformation } from "@/components/navigation/DataInformation";
 import Layout from "@/components/navigation/Layout";
-import { TidalGraphComponent } from "@/components/tideGraph/TidalGraphComponent";
+import { TidalGraph } from "@/components/tideGraph/TidalGraph";
 import { getTidesForGraph } from "@/readTideTimes";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 
 export const Route = createFileRoute("/tide-graph/$date")({
   loader: async ({ params }) => {
@@ -36,11 +38,7 @@ export const Route = createFileRoute("/tide-graph/$date")({
     const day = loaderData?.day;
     if (!day) return { meta: [] };
     const pageTitle =
-      DateTime.fromSQL(day.date).toLocaleString({
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }) + " Porthmadog Tide Graph";
+      DateTime.fromSQL(day.date).toFormat("d MMMM yyyy") + " Porthmadog Tide Graph";
 
     return {
       meta: [
@@ -78,27 +76,49 @@ export const Route = createFileRoute("/tide-graph/$date")({
   }
 });
 
+const Warning = () => {
+  return (
+    <Box p={0}>
+      <Group justify="flex-start" mb="sm" maw={"100%"}>
+        <Badge
+          color="red"
+          size="xl"
+          leftSection={
+            <IconAlertTriangleFilled
+              style={{ width: rem(15), height: rem(15) }}
+            />
+          }
+        >
+          Warning
+        </Badge>
+        <Text fw={500} tt="uppercase">
+          Not to be used for navigation
+        </Text>
+      </Group>
+      <Text>
+        {" "}
+        Tide Graphs for Porthmadog are not published by authoritative sources and should be considered highly unreliable due to seasonal river flows and poorly understood tidal dynamics in the estuary. This graph is produced by extrapolating from published high water times and heights.
+      </Text>
+    </Box>
+  );
+};
+
+
 function TideGraphPageComponent() {
   const { day, nextDay, previousDay, highTides, graphStartTimestamp, graphEndTimestamp } = Route.useLoaderData();
-
+  const [warningModalOpened, { close: closeWarningModal }] = useDisclosure(true);
+  const isMobile = useMediaQuery('(max-width: 50em)');
   return (
     <Layout
       title={
-        DateTime.fromSQL(day.date).toLocaleString({
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }) + " Porthmadog Tide Graph"
+        DateTime.fromSQL(day.date).toFormat("d MMMM yyyy") + " Porthmadog Tide Graph"
       }
       headerButtons={
         <>
           {previousDay ? (
             <Link to={"/tide-graph/$date"} params={{ date: previousDay }}>
               <Button leftSection={<IconArrowLeft size={14} />} variant="light">
-                {DateTime.fromSQL(previousDay).toLocaleString({
-                  day: "numeric",
-                  month: "short",
-                })}
+                {DateTime.fromSQL(previousDay).toFormat("d MMM")}
               </Button>
             </Link>
           ) : null}
@@ -113,51 +133,36 @@ function TideGraphPageComponent() {
                 leftSection={<IconArrowRight size={14} />}
                 variant="light"
               >
-                {DateTime.fromSQL(nextDay).toLocaleString({
-                  day: "numeric",
-                  month: "short",
-                })}
+                {DateTime.fromSQL(nextDay).toFormat("d MMM")}
               </Button>
             </Link>
           ) : null}
         </>
       }
     >
-      <TidalGraphComponent
+      <Modal opened={warningModalOpened} fullScreen={isMobile} withCloseButton={false} onClose={closeWarningModal} centered={!isMobile} overlayProps={{
+        backgroundOpacity: 0.55,
+        blur: 3,
+      }}>
+        <Warning />
+        <Group justify="right" mt="md">
+          <Button onClick={closeWarningModal}>Acknowledge</Button>
+        </Group>
+      </Modal>
+      <TidalGraph
         highTides={highTides}
         sunrise={DateTime.fromSQL(day.date + " " + day.sunrise).toMillis() / 1000}
         sunset={DateTime.fromSQL(day.date + " " + day.sunset).toMillis() / 1000}
         startTimestamp={graphStartTimestamp.getTime() / 1000}
         endTimestamp={graphEndTimestamp.getTime() / 1000}
       />
-      <Paper shadow="xl" withBorder p="xl">
-        <Group justify="flex-start" mb="sm">
-          <Badge
-            color="red"
-            size="xl"
-            leftSection={
-              <IconAlertTriangleFilled
-                style={{ width: rem(15), height: rem(15) }}
-              />
-            }
-          >
-            Warning
-          </Badge>
-          <Text fw={500} tt="uppercase">
-            Not to be used for navigation
-          </Text>
-        </Group>
-        <Text>
-          {" "}
-          Tide Graphs for Porthmadog are not published by authoritative sources
-          and should be considered highly unreliable due to seasonal river flows
-          and poorly understood tidal dynamics in the estuary. This graph is
-          produced by extrapolating from published high water times and heights.
-        </Text>
-      </Paper>
       <Box p="sm">
         <DataInformation />
       </Box>
+      <Paper withBorder p="md">
+        <Warning />
+      </Paper>
+
     </Layout>
   );
 }

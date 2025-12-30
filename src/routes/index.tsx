@@ -79,9 +79,7 @@ function App() {
               variant="light"
               visibleFrom="sm"
             >
-              {DateTime.fromJSDate(today).toLocaleString({
-                month: "long",
-              })}{" "}
+              {DateTime.fromJSDate(today).toFormat("MMMM")}{" "}
               Tide Table
             </Button>
           </Link>
@@ -91,18 +89,14 @@ function App() {
         {tides.map((element, index: React.Key) => (
           <Card shadow="xs" padding={"xs"} key={index}>
             <Text size="xl" fw={500} mb={"xs"}>
-              {DateTime.fromSQL(element.date).toLocaleString({
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-              })}
+              {DateTime.fromSQL(element.date).toFormat("cccc dd MMMM")}
             </Text>
             {element.groups.map((tide) => (
               <Group justify="start" mt={0} mb={0}>
                 <Text size="lg" fw={500}>
                   {DateTime.fromSQL(
                     element.date + " " + tide.time
-                  ).toLocaleString(DateTime.TIME_SIMPLE)}
+                  ).toFormat("HH:mm")}
                 </Text>
                 <Text size="lg" fw={200}>
                   {tide.height}m
@@ -133,9 +127,7 @@ function App() {
           <Card shadow="xs" padding={"xs"} hiddenFrom="sm">
             <Group justify="space-between">
               <Text size="xl" fw={500}>
-                {DateTime.fromJSDate(today).toLocaleString({
-                  month: "long",
-                })}{" "}
+                {DateTime.fromJSDate(today).toFormat("MMMM")}{" "}
                 Tide Table
               </Text>
               <IconArrowRight />

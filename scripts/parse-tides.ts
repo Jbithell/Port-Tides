@@ -267,7 +267,7 @@ function generatePdf(monthKey: string, days: TideDay[], firstDayDt: DateTime, ou
     doc.text(`${monthName} ${year}`, startX, 10, { align: 'left' });
     doc.text('Porthmadog', startX, 10, { align: 'right', width: tableWidth });
     doc.font('Helvetica').fontSize(18);
-    doc.text('High Water - Heights above Chart Datum', startX, 30, { align: 'center', width: tableWidth });
+    doc.text('High Water - Heights above Chart Datum', startX, 32, { align: 'center', width: tableWidth });
 
     // --- Table Header ---
     const headerTop = 55;

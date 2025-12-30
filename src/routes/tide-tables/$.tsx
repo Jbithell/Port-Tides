@@ -1,11 +1,13 @@
 import { DataInformation } from "@/components/navigation/DataInformation";
 import Layout from "@/components/navigation/Layout";
-import { TideTable } from "@/components/tideTables/TideTable";
+import { TideTable } from "@/components/tideTables/TideTableDesktop";
 import { TideTableMobile } from "@/components/tideTables/TideTableMobile";
 import { getTidesForMonth } from "@/readTideTimes";
 import {
   Box,
   Button,
+  Center,
+  Title,
 } from "@mantine/core";
 import {
   IconArrowLeft,
@@ -33,10 +35,7 @@ export const Route = createFileRoute("/tide-tables/$")({
     if (!pdf) return { meta: [] };
     const firstDayOfMonth = pdf.date;
     const pageTitle =
-      DateTime.fromSQL(firstDayOfMonth).toLocaleString({
-        month: "long",
-        year: "numeric",
-      }) + " Porthmadog Tide Table";
+      DateTime.fromSQL(firstDayOfMonth).toFormat("MMMM yyyy") + " Porthmadog Tide Table";
 
     return {
       meta: [
@@ -79,10 +78,7 @@ function TideTablePageComponent() {
 
   const firstDayOfMonth = pdf.date;
   const pageTitle =
-    DateTime.fromSQL(firstDayOfMonth).toLocaleString({
-      month: "long",
-      year: "numeric",
-    }) + " Porthmadog Tide Table";
+    DateTime.fromSQL(firstDayOfMonth).toFormat("MMMM yyyy") + " Porthmadog Tide Table";
 
   return (
     <Layout
@@ -107,6 +103,7 @@ function TideTablePageComponent() {
       }
     >
       <Box hiddenFrom="sm">
+        <Center><Title order={2} my="sm">High Tide Times</Title></Center>
         <TideTableMobile data={tides} />
       </Box>
       <Box visibleFrom="sm">
@@ -115,6 +112,6 @@ function TideTablePageComponent() {
       <Box p="sm">
         <DataInformation />
       </Box>
-    </Layout>
+    </Layout >
   );
 }
