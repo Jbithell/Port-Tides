@@ -1,43 +1,23 @@
-import React from "react";
-import { TidesJson_ScheduleObject } from "../../types";
-import TidalData from "../../../data/tides.json";
+import { Loader } from "@mantine/core";
+import { ClientOnly } from "@tanstack/react-router";
+import { graphDataGenerator } from "./graphDataGenerator";
 import { TidalGraphComponent } from "./TidalGraphComponent";
 
-export function TidalGraph({ date }: { date: Date }) {
-  const startTimestamp = date;
-  startTimestamp.setHours(0, 0, 0, 0);
-  const endTimestamp = new Date(startTimestamp);
-  endTimestamp.setDate(endTimestamp.getDate() + 1); // The charts don't work so well beyond a day
-  let startIndex = TidalData.schedule.findIndex(
-    (date: TidesJson_ScheduleObject) => {
-      return new Date(date.date) >= startTimestamp;
-    }
-  );
-  let endIndex = TidalData.schedule.findIndex(
-    (date: TidesJson_ScheduleObject) => {
-      return new Date(date.date) >= endTimestamp;
-    }
-  );
-
-  // Adjust indices to include the days immediately before and after the range to capture them in the graph
-  startIndex = startIndex > 0 ? startIndex - 1 : startIndex;
-  endIndex = endIndex < TidalData.schedule.length ? endIndex + 1 : endIndex;
-
-  // Slice the array to get the desired elements
-  const highTides = TidalData.schedule
-    .slice(startIndex, endIndex)
-    .flatMap((date: TidesJson_ScheduleObject) =>
-      date.groups.map((tide) => ({
-        timestamp: new Date(date.date + " " + tide.time).getTime() / 1000,
-        height: Number(tide.height),
-      }))
-    );
-
+export function TidalGraph({
+  highTides,
+  sunrise,
+  sunset,
+  startTimestamp,
+  endTimestamp,
+}: {
+  highTides: Array<{ timestamp: number; height: number }>;
+  sunrise: number;
+  sunset: number;
+  startTimestamp: number;
+  endTimestamp: number;
+}) {
+  const graphData = graphDataGenerator(highTides);
   return (
-    <TidalGraphComponent
-      highTides={highTides}
-      startTimestamp={startTimestamp.getTime() / 1000}
-      endTimestamp={endTimestamp.getTime() / 1000}
-    />
+    <ClientOnly fallback={<Loader />}><TidalGraphComponent graphData={graphData} highTides={highTides} sunrise={sunrise} sunset={sunset} startTimestamp={startTimestamp} endTimestamp={endTimestamp} /></ClientOnly>
   );
 }

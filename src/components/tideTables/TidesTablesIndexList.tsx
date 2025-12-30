@@ -1,15 +1,13 @@
-import React from "react";
-import { TidesJson_PDFObject } from "../../types";
-import TidalData from "../../../data/tides.json";
+import { TidesJson_TopLevel } from "@/types";
 import { TideTablesMonthList } from "./TideTablesMonthList";
 
-export function TideTablesIndexList() {
+export function TideTablesIndexList({ tidalData }: { tidalData: TidesJson_TopLevel }) {
   const month = new Date();
   month.setHours(0, 0, 0, 0);
   month.setDate(1);
   const nextYear = new Date(month);
   nextYear.setFullYear(month.getFullYear() + 1);
-  const files = TidalData.pdfs.filter((pdf: TidesJson_PDFObject) => {
+  const files = tidalData.pdfs.filter((pdf) => {
     let date = new Date(pdf.date);
     return date < nextYear && date >= month;
   });

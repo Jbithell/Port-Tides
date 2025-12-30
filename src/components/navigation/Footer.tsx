@@ -1,12 +1,8 @@
 import { Button, Container, Group, Modal, Text } from "@mantine/core";
-import React from "react";
-import { Link } from "gatsby";
-import { useBuildDate } from "../../hooks/use-build-date";
 import { useDisclosure } from "@mantine/hooks";
 import { DataInformation } from "./DataInformation";
 
 export function Footer() {
-  const buildYear = useBuildDate();
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -26,13 +22,13 @@ export function Footer() {
             Data information
           </Button>
           <Text>
-            &copy;2014-{buildYear}{" "}
-            <Link
-              to={"https://jbithell.com"}
+            &copy;2014-{new Date().getFullYear()}{" "}
+            <a
+              href={"https://jbithell.com"}
               style={{ textDecoration: "none", color: "inherit" }}
             >
               James Bithell
-            </Link>
+            </a>
           </Text>
         </Group>
       </Container>
