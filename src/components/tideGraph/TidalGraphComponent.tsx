@@ -1,7 +1,7 @@
 import { LineChart } from "@mantine/charts";
 import { Box, Center, Divider, Group, NumberInput, Paper, SegmentedControl, Stack, Switch, Text } from "@mantine/core";
 import { TimePicker } from '@mantine/dates';
-import { useLocalStorage } from "@mantine/hooks";
+import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import { IconArrowDown, IconArrowUp, IconClock, IconLineHeight, IconMinus } from "@tabler/icons-react";
 import { DateTime } from "luxon";
 import classes from './TidalGraph.module.css';
@@ -111,6 +111,7 @@ export function TidalGraphComponent({
   endTimestamp: number;
   graphData: Array<{ date: number; Height: number }>;
 }) {
+  const isMobile = useMediaQuery('(max-width: 50em)');
   const [config, setLocalStorageConfig] = useLocalStorage({
     key: 'tidal-graph-config',
     defaultValue: defaultConfig,
@@ -204,9 +205,10 @@ export function TidalGraphComponent({
       />
       <Paper shadow="xl" withBorder p="md" mb="xl" mt="md">
         <Stack gap="md">
-          <Divider label="Tide Height Tools" labelPosition="center" />
+          <Divider label="Tide Height & Port Entry Tools" labelPosition="center" />
 
           <SegmentedControl
+            orientation={isMobile ? "vertical" : "horizontal"}
             value={config.toolMode}
             onChange={(value) => setConfig({ toolMode: value as any })}
             data={[
@@ -216,7 +218,7 @@ export function TidalGraphComponent({
                   <Center>
                     <Group gap="xs">
                       <IconLineHeight size={16} />
-                      <span>Find times for a given tide height</span>
+                      <span>Find times for a target height</span>
                     </Group>
                   </Center>
                 ),
@@ -227,7 +229,7 @@ export function TidalGraphComponent({
                   <Center>
                     <Group gap="xs">
                       <IconClock size={16} />
-                      <span>Find tide height at a given time</span>
+                      <span>Find other times with the same height as a target time</span>
                     </Group>
                   </Center>
                 ),
