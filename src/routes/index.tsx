@@ -1,6 +1,6 @@
-import { etagForDay, secondsLeftInDay } from "@/cacheTimings";
 import { getHomepageTides } from "@/readTideTimes";
 import {
+  Badge,
   Button,
   Card,
   Center,
@@ -16,7 +16,9 @@ import {
   IconCalendar,
   IconChartHistogram,
   IconDownload,
-  IconTable,
+  IconRippleDown,
+  IconRippleUp,
+  IconTable
 } from "@tabler/icons-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DateTime } from "luxon";
@@ -29,18 +31,14 @@ export const Route = createFileRoute('/')({
     return getHomepageTides({ data: { daysToDisplay: 10 } }) // Fetch the maximum needed (10) so it's available for all screen sizes
   },
   headers: async () => {
-    // Cache the page for the duration of the day, as essentially the page only ever changes at midnight daily
-    const expiry = await secondsLeftInDay()
-    const etag = await etagForDay()
     return {
-      'Cache-Control': `public, max-age=${expiry}, s-maxage=${expiry}, must-revalidate`,
-      'ETag': etag,
+      'Cache-Control': `public, max-age=${60}, s-maxage=${60 * 5}, must-revalidate`,
     }
   },
 })
 
 function App() {
-  const { homepageTides, today, homepageFiles } = Route.useLoaderData()
+  const { homepageTides, today, homepageFiles, nextHighTide } = Route.useLoaderData()
   const daysToDisplay = useMatches({ base: 3, sm: 6, md: 8, lg: 10, xl: 10 }) as number;
   const tidesToDisplay = homepageTides.slice(0, daysToDisplay);
 
@@ -54,6 +52,14 @@ function App() {
           <Text fw={200}>North Wales, United Kingdom</Text>
         </Stack>
       </Center>
+      {nextHighTide && (
+        <Group justify="space-between" mb="sm" mt="sm">
+          <Title order={2} size={"h2"} my="sm">
+            Next High Tide is in {nextHighTide.hours > 0 ? `${nextHighTide.hours} hour${nextHighTide.hours > 1 ? "s" : ""} ` : ""}{nextHighTide.minutes} minute{nextHighTide.minutes !== 1 ? "s" : ""} at {nextHighTide.time} ({nextHighTide.height}m)
+          </Title>
+          {((nextHighTide.hours > 1 || (nextHighTide.hours === 0 && nextHighTide.minutes > 30)) && (nextHighTide.hours < 5 || nextHighTide.hours > 7)) && <Badge size="xl" leftSection={nextHighTide.hours < 5 ? <IconRippleUp size={18} /> : <IconRippleDown size={18} />}>{nextHighTide.hours < 5 ? "Tide is coming in" : "Tide is going out"}</Badge>}{/** Don't show if the tide is less than 30 minutes away as the top of the tide is not an exact science with river flows, or if it's between 5 and 7 hours away as the bottom of the tide is ambigiously timed */}
+        </Group>
+      )}
       <Group justify="space-between" mb="sm" mt="sm">
         <Title order={2} size={"h3"}>
           High Tide Times this week
