@@ -1,4 +1,4 @@
-import { getTides } from "@/readTideTimes";
+import { getHomepageTides } from "@/readTideTimes";
 import {
   Button,
   Card,
@@ -8,40 +8,32 @@ import {
   Stack,
   Text,
   Title,
-  useMatches,
+  useMatches
 } from "@mantine/core";
 import {
   IconArrowRight,
   IconCalendar,
   IconChartHistogram,
+  IconDownload,
   IconTable,
 } from "@tabler/icons-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import * as React from "react";
 import Layout from "../components/navigation/Layout";
-import { TideTablesIndexList } from "../components/tideTables/TidesTablesIndexList";
 
 export const Route = createFileRoute('/')({
   component: App,
   loader: async () => {
-    return getTides()
+    return getHomepageTides({ data: { daysToDisplay: 10 } }) // Fetch the maximum needed (10) so it's available for all screen sizes
   },
 })
 
 function App() {
-  const tidalData = Route.useLoaderData()
-  const daysToDisplay = useMatches({ base: 5, sm: 6, md: 8, lg: 10, xl: 10 });
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const nextWeek = new Date(today);
-  nextWeek.setDate(today.getDate() + daysToDisplay);
-  const tides = tidalData.schedule.filter(
-    (tideDay) => {
-      let date = new Date(tideDay.date);
-      return date >= today && date <= nextWeek;
-    }
-  );
+  const { homepageTides, today, homepageFiles } = Route.useLoaderData()
+  const daysToDisplay = useMatches({ base: 3, sm: 6, md: 8, lg: 10, xl: 10 }) as number;
+  const tidesToDisplay = homepageTides.slice(0, daysToDisplay);
+
   return (
     <Layout>
       <Center>
@@ -86,13 +78,13 @@ function App() {
         </Group>
       </Group>
       <SimpleGrid cols={{ base: 1, sm: 3, md: 4, lg: 5, xl: 5 }}>
-        {tides.map((element, index: React.Key) => (
+        {tidesToDisplay.map((element, index: React.Key) => (
           <Card shadow="xs" padding={"xs"} key={index}>
             <Text size="xl" fw={500} mb={"xs"}>
               {DateTime.fromSQL(element.date).toFormat("cccc dd MMMM")}
             </Text>
             {element.groups.map((tide) => (
-              <Group justify="start" mt={0} mb={0}>
+              <Group justify="start" mt={0} mb={0} key={tide.time}>
                 <Text size="lg" fw={500}>
                   {DateTime.fromSQL(
                     element.date + " " + tide.time
@@ -152,7 +144,24 @@ function App() {
           </Link>
         </Group>
       </Group>
-      <TideTablesIndexList tidalData={tidalData} />
+      <SimpleGrid cols={{ base: 1, sm: 3, md: 4 }}>
+        {homepageFiles.map((month, index) => (
+          <Link
+            to={"/tide-tables/" + month.url}
+            style={{ textDecoration: "none" }}
+            key={index}
+          >
+            <Card shadow="xs" padding={"xs"} key={index}>
+              <Group justify="space-between">
+                <Text size="xl" fw={500} mb={"xs"}>
+                  {month.name}
+                </Text>
+                <IconDownload />
+              </Group>
+            </Card>
+          </Link>
+        ))}
+      </SimpleGrid>
     </Layout>
   );
 };
