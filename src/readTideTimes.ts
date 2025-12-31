@@ -128,7 +128,32 @@ export const getHomepageTides = createServerFn({ method: 'GET' }).inputValidator
       let date = new Date(pdf.date);
       return date < nextYear && date >= month;
     });
-    return { homepageTides, today, homepageFiles };
+    // Get the next high tide
+    const now = DateTime.now().setZone('Europe/London');
+    const allTides = homepageTides.flatMap((day) =>
+      day.groups.map((tide) => ({
+        time: DateTime.fromSQL(day.date + " " + tide.time).setZone(
+          "Europe/London"
+        ),
+        height: tide.height,
+      }))
+    );
+
+    const nextHighTideObj = allTides.find((tide) => tide.time > now);
+    let nextHighTide = null;
+    if (nextHighTideObj) {
+      const diff = nextHighTideObj.time.diff(now, ["hours", "minutes"]);
+      const hours = Math.floor(diff.hours);
+      const minutes = Math.floor(diff.minutes);
+      nextHighTide = {
+        hours,
+        minutes,
+        time: nextHighTideObj.time.toFormat("HH:mm"),
+        height: nextHighTideObj.height
+      };
+    }
+
+    return { homepageTides, today, homepageFiles, nextHighTide };
   })
 
 
