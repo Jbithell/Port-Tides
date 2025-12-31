@@ -1,14 +1,14 @@
-import { Accordion, Button, Text } from "@mantine/core";
-import { IconHome } from "@tabler/icons-react";
+import { etagForMonth, secondsLeftIMonth } from "@/cacheTimings";
+import { Accordion, Button, Card, Group, SimpleGrid, Text } from "@mantine/core";
+import { IconDownload, IconHome } from "@tabler/icons-react";
 import { createFileRoute, Link } from '@tanstack/react-router';
 import Layout from "../../components/navigation/Layout";
-import { TideTablesMonthList } from "../../components/tideTables/TideTablesMonthList";
-import { getPDFs } from "../../readTideTimes";
+import { getTideTablesByYear } from "../../readTideTimes";
 export const Route = createFileRoute('/tide-tables/')({
   component: Page,
   loader: async () => {
-    const pdfs = await getPDFs();
-    return { pdfs };
+    const { years, month } = await getTideTablesByYear();
+    return { years, month };
   },
   head: () => ({
     meta: [
@@ -43,36 +43,19 @@ export const Route = createFileRoute('/tide-tables/')({
         }),
       },
     ],
-  })
+  }),
+  headers: async () => {
+    // Cache the page for the duration of the month, as essentially the page only ever changes at the end of the month when a new month is added
+    const expiry = await secondsLeftIMonth()
+    const etag = await etagForMonth()
+    return {
+      'Cache-Control': `public, max-age=${expiry}, s-maxage=${expiry}, must-revalidate`,
+      'ETag': etag,
+    }
+  },
 })
 function Page() {
-  const month = new Date();
-  month.setHours(0, 0, 0, 0);
-  month.setDate(1);
-  const nextYear = new Date(month);
-  nextYear.setFullYear(month.getFullYear() + 1);
-
-  const { pdfs } = Route.useLoaderData();
-  const files = pdfs.filter((pdf) => {
-    let date = new Date(pdf.date);
-    return date < nextYear;
-  });
-  const years = [
-    ...new Set(
-      files.map((month) => {
-        return new Date(month.date).getFullYear();
-      })
-    ),
-  ]
-    .map((year) => {
-      return {
-        year: year as number,
-        months: files.filter((month) => {
-          return year == new Date(month.date).getFullYear();
-        }),
-      };
-    })
-    .reverse();
+  const { years, month } = Route.useLoaderData();
   return (
     <Layout
       title="Downloadable Tide Tables"
@@ -99,7 +82,24 @@ function Page() {
               </Text>
             </Accordion.Control>
             <Accordion.Panel>
-              <TideTablesMonthList files={year.months} />
+              <SimpleGrid cols={{ base: 1, sm: 3, md: 4 }}>
+                {year.months.map((month, index) => (
+                  <Link
+                    to={"/tide-tables/" + month.url}
+                    style={{ textDecoration: "none" }}
+                    key={index}
+                  >
+                    <Card shadow="xs" padding={"xs"} key={index}>
+                      <Group justify="space-between">
+                        <Text size="xl" fw={500} mb={"xs"}>
+                          {month.name}
+                        </Text>
+                        <IconDownload />
+                      </Group>
+                    </Card>
+                  </Link>
+                ))}
+              </SimpleGrid>
             </Accordion.Panel>
           </Accordion.Item>
         ))}

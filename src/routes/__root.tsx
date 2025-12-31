@@ -32,6 +32,12 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  headers: () => {
+    return {
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+      'X-Content-Type-Options': 'nosniff',
+    }
+  },
 })
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

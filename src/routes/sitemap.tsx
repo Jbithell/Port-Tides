@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { getTides } from "../readTideTimes";
+import { getSitemapTides } from "../readTideTimes";
 
 /**
  * This page is a long list of all the pages on the site, which is used to crawl the prerender pages to ensure all the tide times are prerendered.
@@ -8,7 +8,7 @@ import { getTides } from "../readTideTimes";
 export const Route = createFileRoute('/sitemap')({
   component: Page,
   loader: async () => {
-    const tidalData = await getTides();
+    const tidalData = await getSitemapTides();
     return tidalData;
   },
 })

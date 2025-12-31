@@ -13,10 +13,6 @@ const TidalData = () => {
   return tidalDataFromFile as TidesJson_TopLevel
 }
 
-export const getTides = createServerFn({ method: 'GET' }).handler(async () => {
-  return TidalData()
-})
-
 export const getPDFs = createServerFn({ method: 'GET' }).handler(async () => {
   return TidalData().pdfs;
 })
@@ -106,3 +102,73 @@ export const getTidesForGraph = createServerFn({ method: 'GET' })
 
     return { day, nextDay, previousDay, highTides, graphStartTimestamp, graphEndTimestamp };
   });
+
+export const getHomepageTides = createServerFn({ method: 'GET' }).inputValidator((d: { daysToDisplay: number }) => d)
+  .handler(async ({ data }) => {
+    const { daysToDisplay } = data;
+    if (daysToDisplay < 1 || daysToDisplay > 10) {
+      throw notFound();
+    }
+    const today = DateTime.now().setZone('Europe/London').startOf('day').toJSDate();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + daysToDisplay);
+
+    const tidalData = TidalData();
+    const homepageTides = tidalData.schedule.filter(
+      (tideDay) => {
+        let date = new Date(tideDay.date);
+        return date >= today && date <= nextWeek;
+      }
+    );
+
+    const month = DateTime.now().setZone('Europe/London').startOf('month').toJSDate();
+    const nextYear = new Date(month);
+    nextYear.setFullYear(month.getFullYear() + 1);
+    const homepageFiles = tidalData.pdfs.filter((pdf) => {
+      let date = new Date(pdf.date);
+      return date < nextYear && date >= month;
+    });
+    return { homepageTides, today, homepageFiles };
+  })
+
+
+export const getSitemapTides = createServerFn({ method: 'GET' }).handler(async () => {
+  return TidalData();
+})
+
+export const getTideTablesByYear = createServerFn({ method: 'GET' }).handler(async () => {
+  const month = DateTime.now().setZone('Europe/London').startOf('month').toJSDate();
+  const nextYear = new Date(month);
+  nextYear.setFullYear(month.getFullYear() + 1);
+
+  const tidalData = TidalData();
+
+  const files = tidalData.pdfs.filter((pdf) => {
+    let date = new Date(pdf.date);
+    return date < nextYear;
+  });
+  const years = [
+    ...new Set(
+      files.map((month) => {
+        return new Date(month.date).getFullYear();
+      })
+    ),
+  ]
+    .map((year) => {
+      return {
+        year: year as number,
+        months: files.filter((month) => {
+          return year == new Date(month.date).getFullYear();
+        }).map((month) => {
+          return {
+            name: month.name,
+            url: month.url,
+          };
+        }),
+      };
+    })
+    .reverse();
+
+  return { years, month };
+})
+
