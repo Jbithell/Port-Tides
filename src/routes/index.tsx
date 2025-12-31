@@ -1,3 +1,4 @@
+import { etagForDay, secondsLeftInDay } from "@/cacheTimings";
 import { getHomepageTides } from "@/readTideTimes";
 import {
   Button,
@@ -26,6 +27,15 @@ export const Route = createFileRoute('/')({
   component: App,
   loader: async () => {
     return getHomepageTides({ data: { daysToDisplay: 10 } }) // Fetch the maximum needed (10) so it's available for all screen sizes
+  },
+  headers: async () => {
+    // Cache the page for the duration of the day, as essentially the page only ever changes at midnight daily
+    const expiry = await secondsLeftInDay()
+    const etag = await etagForDay()
+    return {
+      'Cache-Control': `public, max-age=${expiry}, s-maxage=${expiry}, must-revalidate`,
+      'ETag': etag,
+    }
   },
 })
 

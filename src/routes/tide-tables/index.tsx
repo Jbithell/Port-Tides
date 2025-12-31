@@ -1,3 +1,4 @@
+import { etagForMonth, secondsLeftIMonth } from "@/cacheTimings";
 import { Accordion, Button, Card, Group, SimpleGrid, Text } from "@mantine/core";
 import { IconDownload, IconHome } from "@tabler/icons-react";
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -42,7 +43,16 @@ export const Route = createFileRoute('/tide-tables/')({
         }),
       },
     ],
-  })
+  }),
+  headers: async () => {
+    // Cache the page for the duration of the month, as essentially the page only ever changes at the end of the month when a new month is added
+    const expiry = await secondsLeftIMonth()
+    const etag = await etagForMonth()
+    return {
+      'Cache-Control': `public, max-age=${expiry}, s-maxage=${expiry}, must-revalidate`,
+      'ETag': etag,
+    }
+  },
 })
 function Page() {
   const { years, month } = Route.useLoaderData();

@@ -109,8 +109,7 @@ export const getHomepageTides = createServerFn({ method: 'GET' }).inputValidator
     if (daysToDisplay < 1 || daysToDisplay > 10) {
       throw notFound();
     }
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = DateTime.now().setZone('Europe/London').startOf('day').toJSDate();
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + daysToDisplay);
 
@@ -122,9 +121,7 @@ export const getHomepageTides = createServerFn({ method: 'GET' }).inputValidator
       }
     );
 
-    const month = new Date();
-    month.setHours(0, 0, 0, 0);
-    month.setDate(1);
+    const month = DateTime.now().setZone('Europe/London').startOf('month').toJSDate();
     const nextYear = new Date(month);
     nextYear.setFullYear(month.getFullYear() + 1);
     const homepageFiles = tidalData.pdfs.filter((pdf) => {
@@ -140,9 +137,7 @@ export const getSitemapTides = createServerFn({ method: 'GET' }).handler(async (
 })
 
 export const getTideTablesByYear = createServerFn({ method: 'GET' }).handler(async () => {
-  const month = new Date();
-  month.setHours(0, 0, 0, 0);
-  month.setDate(1);
+  const month = DateTime.now().setZone('Europe/London').startOf('month').toJSDate();
   const nextYear = new Date(month);
   nextYear.setFullYear(month.getFullYear() + 1);
 

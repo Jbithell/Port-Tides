@@ -62,6 +62,11 @@ export const Route = createFileRoute('/ical')({
       },
     ],
   }),
+  headers: () => {
+    return {
+      'Cache-Control': `public, max-age=604800, s-maxage=31536000`, // Cache for 7 days client side, 1 year CDN side
+    }
+  },
 })
 
 function PostsIndexComponent() {
