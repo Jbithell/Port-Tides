@@ -231,7 +231,7 @@ function generateHtml(monthKey: string, days: TideDay[], firstDayDt: DateTime) {
 function generateCompactPdf(monthKey: string, days: TideDay[], firstDayDt: DateTime, outputPath: string) {
   const doc = new PDFDocument({ size: 'A4', margins: { top: 40, bottom: 40, left: 20, right: 20 } });
   const monthName = firstDayDt.toFormat('MMMM');
-  doc.info.Title = `Porthmadog Tide Times (Compact) - ${monthName}`;
+  doc.info.Title = `Porthmadog Tide Times (Compact) - ${monthName} ${firstDayDt.toFormat('yyyy')}`;
   doc.info.Author = 'Port-Tides.com';
   const stream = fs.createWriteStream(outputPath);
   doc.pipe(stream);
@@ -245,7 +245,7 @@ function generateCompactPdf(monthKey: string, days: TideDay[], firstDayDt: DateT
 
   // Header Title
   doc.font('Helvetica-Bold').fontSize(16);
-  doc.text(`High Water Porthmadog (Compact View) - ${monthName}`, startX, 30, { align: 'center', width: tableWidth });
+  doc.text(`High Water Porthmadog (Compact View) - ${monthName} ${firstDayDt.toFormat('yyyy')}`, startX, 30, { align: 'center', width: tableWidth });
 
   // Table Header
   doc.fontSize(12);
