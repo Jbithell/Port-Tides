@@ -35,6 +35,7 @@ export const Route = createRootRoute({
   headers: () => {
     return {
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+      'X-Content-Type-Options': 'nosniff',
     }
   },
 })
