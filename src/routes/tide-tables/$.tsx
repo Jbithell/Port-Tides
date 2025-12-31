@@ -7,11 +7,13 @@ import {
   Box,
   Button,
   Center,
+  Menu,
   Title,
 } from "@mantine/core";
 import {
   IconArrowLeft,
   IconDownload,
+  IconFileTypeCsv,
   IconFileTypePdf,
 } from "@tabler/icons-react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
@@ -95,15 +97,41 @@ function TideTablePageComponent() {
               Other Months
             </Button>
           </Link>
-          <a href={"/tide-tables/" + pdf.filename} download>
-            <Button
-              rightSection={<IconFileTypePdf size={14} />}
-              leftSection={<IconDownload size={14} />}
-              variant="light"
-            >
-              Download
-            </Button>
-          </a>
+          <Menu position="bottom-end">
+            <Menu.Target>
+              <Button variant="light" rightSection={<IconDownload size={14} />}>
+                Download
+              </Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconFileTypePdf size={14} />}
+                variant="light"
+                component="a"
+                href={"/tide-tables/" + pdf.filename}
+                download
+              >
+                Download Standard PDF
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconFileTypePdf size={14} />}
+                variant="light"
+                component="a"
+                href={"/tide-tables/" + pdf.filename.replace(".pdf", "-compact.pdf")}
+                download
+              >
+                Download Compact PDF
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconFileTypeCsv size={14} />}
+                variant="light"
+                component="a"
+                href={"/tide-tables/" + pdf.filename.replace(".pdf", ".csv")}
+                download
+              >
+                Download CSV
+              </Menu.Item></Menu.Dropdown>
+          </Menu>
         </>
       }
     >
