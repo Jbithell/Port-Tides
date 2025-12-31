@@ -138,3 +138,42 @@ export const getHomepageTides = createServerFn({ method: 'GET' }).inputValidator
 export const getSitemapTides = createServerFn({ method: 'GET' }).handler(async () => {
   return TidalData();
 })
+
+export const getTideTablesByYear = createServerFn({ method: 'GET' }).handler(async () => {
+  const month = new Date();
+  month.setHours(0, 0, 0, 0);
+  month.setDate(1);
+  const nextYear = new Date(month);
+  nextYear.setFullYear(month.getFullYear() + 1);
+
+  const tidalData = TidalData();
+
+  const files = tidalData.pdfs.filter((pdf) => {
+    let date = new Date(pdf.date);
+    return date < nextYear;
+  });
+  const years = [
+    ...new Set(
+      files.map((month) => {
+        return new Date(month.date).getFullYear();
+      })
+    ),
+  ]
+    .map((year) => {
+      return {
+        year: year as number,
+        months: files.filter((month) => {
+          return year == new Date(month.date).getFullYear();
+        }).map((month) => {
+          return {
+            name: month.name,
+            url: month.url,
+          };
+        }),
+      };
+    })
+    .reverse();
+
+  return { years, month };
+})
+

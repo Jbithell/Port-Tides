@@ -18,7 +18,7 @@ const config = defineConfig({
         crawlLinks: true, // Render dynamic routes like the tide table pages because they are linked to from pages
         autoStaticPathsDiscovery: true,
         concurrency: 14, // Cloudflare workers build runs out of memory quite easily
-        filter: ({ path }) => path !== "/" && !path.endsWith(".pdf") // Do not prerender the home page or PDFs, as these get copied from the public directory
+        filter: ({ path }) => path !== "/" && path !== "/tide-tables" && !path.endsWith(".pdf") // Do not prerender the home page, tide tables page (as both of these are dynamic and limited to 12 months in advance) or PDFs (as these get copied from the public directory)
       },
       sitemap: {
         enabled: true,
