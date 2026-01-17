@@ -35,6 +35,14 @@ export const Route = createFileRoute('/')({
       'Cache-Control': `public, max-age=${60}, s-maxage=${60 * 5}, must-revalidate`,
     }
   },
+  head: () => ({
+    links: [
+      {
+        rel: 'canonical',
+        href: `https://port-tides.com`,
+      },
+    ],
+  }),
 })
 
 function App() {

@@ -11,6 +11,14 @@ export const Route = createFileRoute('/sitemap')({
     const tidalData = await getSitemapTides();
     return tidalData;
   },
+  head: () => ({
+    links: [
+      {
+        rel: 'canonical',
+        href: `https://port-tides.com/sitemap`,
+      },
+    ],
+  }),
 })
 function Page() {
   const tidalData = Route.useLoaderData();
